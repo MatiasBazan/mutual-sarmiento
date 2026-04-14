@@ -97,16 +97,20 @@
                     <p class="mt-3 text-sm" style="color:#ef4444;">{{ $message }}</p>
                 @enderror
 
-                {{-- Botón importar --}}
-                <button type="submit"
-                        :disabled="archivos.length === 0 || cargando"
-                        :style="archivos.length > 0 && !cargando
-                            ? 'background:#22c55e; color:#000; font-weight:700; cursor:pointer;'
-                            : 'background:#27272a; color:#52525b; cursor:not-allowed;'"
-                        style="margin-top:24px; width:100%; padding:12px; border:none; border-radius:10px; font-size:15px; transition:opacity .15s;">
-                    <span x-show="!cargando" x-text="archivos.length === 0 ? 'Importar resúmenes' : archivos.length === 1 ? 'Importar 1 resumen' : 'Importar ' + archivos.length + ' resúmenes'"></span>
-                    <span x-show="cargando">Procesando...</span>
-                </button>
+                {{-- Botón importar: visible solo con archivos --}}
+                <button
+                    type="submit"
+                    x-show="archivos.length > 0 && !cargando"
+                    style="display:block; width:100%; padding:12px 24px; background:#22c55e; color:#000; font-weight:700; font-size:14px; border:none; border-radius:8px; cursor:pointer; margin-top:16px; text-align:center; letter-spacing:0.5px;"
+                    x-text="'Importar ' + archivos.length + (archivos.length === 1 ? ' resumen' : ' resúmenes')"
+                ></button>
+
+                <button
+                    type="submit"
+                    x-show="cargando"
+                    disabled
+                    style="display:block; width:100%; padding:12px 24px; background:#27272a; color:#52525b; font-size:14px; border:none; border-radius:8px; cursor:not-allowed; margin-top:16px; text-align:center;"
+                >Procesando...</button>
             </form>
         </div>
 
