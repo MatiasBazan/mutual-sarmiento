@@ -1,0 +1,1 @@
+{{-- Este archivo fue reemplazado por el nav integrado en layouts/app.blade.php --}}
