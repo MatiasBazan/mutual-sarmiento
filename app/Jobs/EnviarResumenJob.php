@@ -121,17 +121,27 @@ class EnviarResumenJob implements ShouldQueue
     {
         $numero = preg_replace('/\D/', '', $celular);
 
+        // Ya tiene 549 → correcto
+        if (str_starts_with($numero, '549')) {
+            return $numero;
+        }
+
+        // Tiene 54 sin el 9 de celular → insertar 9
+        if (str_starts_with($numero, '54')) {
+            return '549' . substr($numero, 2);
+        }
+
+        // Con 0 inicial → quitar
         if (str_starts_with($numero, '0')) {
             $numero = substr($numero, 1);
         }
+
+        // Con 15 inicial → quitar
         if (str_starts_with($numero, '15')) {
             $numero = substr($numero, 2);
         }
-        if (!str_starts_with($numero, '549')) {
-            $numero = '549' . $numero;
-        }
 
-        return $numero;
+        return '549' . $numero;
     }
 
     private function broadcast(Resumen $resumen, string $estado): void
