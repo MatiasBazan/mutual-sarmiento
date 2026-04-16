@@ -110,11 +110,20 @@ class EnviarResumenJob implements ShouldQueue
         } finally {
             // Borrar temp independientemente de éxito o error
             Storage::disk('public')->delete($nombrePublico);
+            Log::info('Archivo temporal borrado', ['path' => $nombrePublico]);
         }
+
+        Log::info('Z-API respuesta', [
+            'status' => $response->status(),
+            'body'   => $response->body(),
+            'ok'     => $response->successful(),
+        ]);
 
         if (!$response->successful()) {
             throw new \Exception('Z-API error: ' . $response->body());
         }
+
+        Log::info('Z-API envío exitoso', ['numero' => $numero]);
     }
 
     private function normalizarCelular(string $celular): string
