@@ -3,18 +3,15 @@
 namespace App\Jobs;
 
 use App\Events\ResumenProgreso;
-use App\Models\Cliente;
 use App\Models\Resumen;
-use GuzzleHttp\Client as GuzzleClient;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Twilio\Http\GuzzleClient as TwilioGuzzleClient;
-use Twilio\Rest\Client as TwilioClient;
 
 class EnviarResumenJob implements ShouldQueue
 {
@@ -46,11 +43,11 @@ class EnviarResumenJob implements ShouldQueue
         }
 
         try {
-            $this->enviarWhatsApp($cliente, $resumen);
+            $this->enviarWhatsApp($cliente->celular, $resumen->pdf_path);
 
             // Borrar PDF del disco público
-            if ($resumen->pdf_path && Storage::disk('public')->exists($resumen->pdf_path)) {
-                Storage::disk('public')->delete($resumen->pdf_path);
+            if ($resumen->pdf_path && Storage::exists($resumen->pdf_path)) {
+                Storage::delete($resumen->pdf_path);
             }
 
             $resumen->update([
@@ -67,45 +64,74 @@ class EnviarResumenJob implements ShouldQueue
         }
     }
 
-    private function enviarWhatsApp(Cliente $cliente, Resumen $resumen): void
+    private function enviarWhatsApp(string $celular, string $pdfPath): void
     {
-        $sid   = config('services.twilio.sid');
-        $token = config('services.twilio.token');
-        $from  = config('services.twilio.whatsapp_from');
+        $instanceId  = config('services.zapi.instance_id');
+        $token       = config('services.zapi.token');
+        $clientToken = config('services.zapi.client_token');
+        $numero      = $this->normalizarCelular($celular);
 
-        $to     = Cliente::normalizarCelular($cliente->celular);
-        $pdfUrl = url(Storage::disk('public')->url($resumen->pdf_path));
-        $body   = "Hola {$cliente->nombre_completo}, te enviamos tu resumen de cuenta del período {$resumen->periodo}.";
-
-        // --- MODO DESARROLLO: simular envío si Twilio no está configurado ---
-        if (empty($sid) || empty($token)) {
-            $toMasked = preg_replace('/\d(?=\d{4})/', '*', $to);
-            Log::info('[Twilio DEV] Envío simulado', [
-                'resumen_id' => $resumen->id,
-                'cliente'    => $cliente->nombre_completo,
-                'to'         => $toMasked,
-                'body'       => $body,
-            ]);
-            return;
+        $fullPath = storage_path('app/private/' . $pdfPath);
+        if (!file_exists($fullPath)) {
+            $fullPath = storage_path('app/' . $pdfPath);
+        }
+        if (!file_exists($fullPath)) {
+            throw new \Exception('PDF no encontrado en: ' . $fullPath);
         }
 
-        // --- PRODUCCIÓN ---
-        // En Windows, curl no encuentra el certificado CA del sistema para HTTPS.
-        // Se configura Guzzle con verify:false solo en local para evitar el error:
-        // "SSL certificate problem: unable to get local issuer certificate"
-        $httpClient = new TwilioGuzzleClient(
-            new GuzzleClient([
-                'verify' => app()->environment('local') ? false : true,
-            ])
-        );
+        $nombreArchivo = 'resumen_' . now()->format('Y-m') . '.pdf';
 
-        $twilio = new TwilioClient($sid, $token, null, null, $httpClient);
+        // Copiar al disco público para que Z-API pueda acceder por URL
+        $nombrePublico = 'temp/' . basename($pdfPath);
+        Storage::disk('public')->put($nombrePublico, file_get_contents($fullPath));
+        $pdfUrl = Storage::disk('public')->url($nombrePublico);
 
-        $twilio->messages->create($to, [
-            'from'     => $from,
-            'body'     => $body,
-            'mediaUrl' => [$pdfUrl],
+        Log::info('Enviando PDF via URL', [
+            'path'    => $pdfPath,
+            'url'     => $pdfUrl,
+            'size'    => filesize($fullPath),
+            'numero'  => $numero,
         ]);
+
+        $headers = ['Content-Type' => 'application/json'];
+        if (!empty($clientToken)) {
+            $headers['Client-Token'] = $clientToken;
+        }
+
+        try {
+            $response = Http::withHeaders($headers)
+                ->when(app()->environment('local'), fn($h) => $h->withoutVerifying())
+                ->post("https://api.z-api.io/instances/{$instanceId}/token/{$token}/send-document/pdf", [
+                    'phone'    => $numero,
+                    'document' => $pdfUrl,
+                    'fileName' => $nombreArchivo,
+                    'caption'  => 'Mutual Club Sarmiento — Su resumen mensual adjunto.',
+                ]);
+        } finally {
+            // Borrar temp independientemente de éxito o error
+            Storage::disk('public')->delete($nombrePublico);
+        }
+
+        if (!$response->successful()) {
+            throw new \Exception('Z-API error: ' . $response->body());
+        }
+    }
+
+    private function normalizarCelular(string $celular): string
+    {
+        $numero = preg_replace('/\D/', '', $celular);
+
+        if (str_starts_with($numero, '0')) {
+            $numero = substr($numero, 1);
+        }
+        if (str_starts_with($numero, '15')) {
+            $numero = substr($numero, 2);
+        }
+        if (!str_starts_with($numero, '549')) {
+            $numero = '549' . $numero;
+        }
+
+        return $numero;
     }
 
     private function broadcast(Resumen $resumen, string $estado): void

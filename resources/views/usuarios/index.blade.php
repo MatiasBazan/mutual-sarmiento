@@ -59,7 +59,7 @@
 
                             <!-- Editar -->
                             <button type="button" title="Editar"
-                                    @click="abrirEditar({{ $u->id }}, '{{ addslashes($u->name) }}', '{{ $u->email }}', '{{ addslashes($u->box_nombre) }}')"
+                                    @click="abrirEditar({{ $u->id }}, {{ Js::from($u->name) }}, {{ Js::from($u->email) }}, {{ Js::from($u->box_nombre) }})"
                                     style="background:transparent; border:none; cursor:pointer; color:#71717a; padding:6px; border-radius:6px; transition:color 0.15s; display:flex;"
                                     onmouseover="this.style.color='#fafafa'"
                                     onmouseout="this.style.color='#71717a'">
@@ -71,7 +71,7 @@
 
                             <!-- Eliminar -->
                             <button type="button" title="Eliminar"
-                                    @click="confirmarEliminar('{{ route('usuarios.destroy', $u) }}', '{{ addslashes($u->name) }}')"
+                                    @click="confirmarEliminar('{{ route('usuarios.destroy', $u) }}', {{ Js::from($u->name) }})"
                                     style="background:transparent; border:none; cursor:pointer; color:#71717a; padding:6px; border-radius:6px; transition:color 0.15s; display:flex;"
                                     onmouseover="this.style.color='#ef4444'"
                                     onmouseout="this.style.color='#71717a'">

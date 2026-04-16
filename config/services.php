@@ -35,10 +35,10 @@ return [
         ],
     ],
 
-    'twilio' => [
-        'sid'            => env('TWILIO_SID'),
-        'token'          => env('TWILIO_TOKEN'),
-        'whatsapp_from'  => env('TWILIO_WHATSAPP_FROM', 'whatsapp:+14155238886'),
+    'zapi' => [
+        'instance_id'  => env('ZAPI_INSTANCE_ID'),
+        'token'        => env('ZAPI_TOKEN'),
+        'client_token' => env('ZAPI_CLIENT_TOKEN', ''),
     ],
 
 ];

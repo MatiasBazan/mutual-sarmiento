@@ -92,7 +92,7 @@
 
                             <!-- Editar -->
                             <button type="button" title="Editar"
-                                    @click="abrirEditar({{ $c->id }}, '{{ addslashes($c->nombre_completo) }}', '{{ addslashes($c->nro_socio ?? '') }}', '{{ addslashes($c->celular ?? '') }}', '{{ addslashes($c->direccion ?? '') }}')"
+                                    @click="abrirEditar({{ $c->id }}, {{ Js::from($c->nombre_completo) }}, {{ Js::from($c->nro_socio ?? '') }}, {{ Js::from($c->celular ?? '') }}, {{ Js::from($c->direccion ?? '') }})"
                                     style="background:transparent; border:none; cursor:pointer; color:#71717a;
                                            padding:6px; border-radius:6px; transition:color 0.15s; display:flex;"
                                     onmouseover="this.style.color='#fafafa'"
@@ -105,7 +105,7 @@
 
                             <!-- Eliminar -->
                             <button type="button" title="Eliminar"
-                                    @click="confirmarEliminar('{{ route('clientes.destroy', $c) }}', '{{ addslashes($c->apellido) }}')"
+                                    @click="confirmarEliminar('{{ route('clientes.destroy', $c) }}', {{ Js::from($c->apellido) }})"
                                     style="background:transparent; border:none; cursor:pointer; color:#71717a;
                                            padding:6px; border-radius:6px; transition:color 0.15s; display:flex;"
                                     onmouseover="this.style.color='#ef4444'"

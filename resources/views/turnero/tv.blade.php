@@ -37,7 +37,7 @@
     </header>
 
     <!-- Grid de boxes -->
-    <main style="flex:1; display:grid; grid-template-columns:repeat(2,1fr); grid-template-rows:repeat(2,1fr); gap:16px; padding:16px;">
+    <main style="flex:1; display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:16px; padding:16px; align-content:start;">
         <template x-for="box in boxes" :key="box.id">
             <div :style="`
                 background: #18181b;

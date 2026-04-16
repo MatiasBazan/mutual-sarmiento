@@ -336,6 +336,16 @@ function resumenes() {
         enviando: false,
         progreso: { total: 0, procesados: 0, porcentaje: 0, clienteNombre: '', estado: '' },
 
+        _badgeColors: {
+            pendiente:   { bg: 'rgba(245,158,11,0.1)',  color: '#f59e0b', border: 'rgba(245,158,11,0.2)' },
+            enviando:    { bg: 'rgba(96,165,250,0.1)',  color: '#60a5fa', border: 'rgba(96,165,250,0.2)' },
+            notificado:  { bg: 'rgba(34,197,94,0.1)',   color: '#22c55e', border: 'rgba(34,197,94,0.2)' },
+            error:       { bg: 'rgba(239,68,68,0.1)',   color: '#ef4444', border: 'rgba(239,68,68,0.2)' },
+            sin_celular: { bg: 'rgba(107,114,128,0.1)', color: '#6b7280', border: 'rgba(107,114,128,0.2)' },
+        },
+
+        _envioTimeout: null,
+
         init() {
             window.Echo.channel('resumenes')
                 .listen('.progreso.updated', (data) => {
@@ -346,19 +356,30 @@ function resumenes() {
                         clienteNombre: data.cliente_nombre,
                         estado:        data.estado,
                     };
-                    // Actualizar solo el texto del label para preservar el punto de color
+                    // Actualizar badge: texto + colores
                     const badge = document.querySelector(`.estado-badge-${data.resumen_id}`);
                     if (badge) {
                         const label = badge.querySelector('[data-label]');
                         if (label) label.textContent = data.estado;
+                        const c = this._badgeColors[data.estado] ?? this._badgeColors['sin_celular'];
+                        badge.style.background  = c.bg;
+                        badge.style.color       = c.color;
+                        badge.style.borderColor = c.border;
+                        const dot = badge.querySelector('span');
+                        if (dot) dot.style.background = c.color;
                     }
-                    if (data.procesados >= data.total && data.total > 0) this.enviando = false;
+                    if (data.procesados >= data.total && data.total > 0) {
+                        this.enviando = false;
+                        clearTimeout(this._envioTimeout);
+                    }
                 });
         },
 
         async enviarTodos() {
             this.enviando = true;
             this.progreso = { total: 0, procesados: 0, porcentaje: 0, clienteNombre: '', estado: '' };
+            // Fallback: si Reverb no responde en 10 min, liberar spinner
+            this._envioTimeout = setTimeout(() => { this.enviando = false; }, 600_000);
             try {
                 const res = await fetch('{{ route('resumenes.enviar-todos') }}', {
                     method: 'POST',
@@ -371,12 +392,14 @@ function resumenes() {
                 if (!res.ok) {
                     alert(json.message ?? 'Error al enviar.');
                     this.enviando = false;
+                    clearTimeout(this._envioTimeout);
                 } else {
                     this.progreso.total = json.total;
                 }
             } catch {
                 alert('Error de conexión.');
                 this.enviando = false;
+                clearTimeout(this._envioTimeout);
             }
         },
     };
