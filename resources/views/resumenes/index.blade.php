@@ -104,6 +104,36 @@
         </p>
     </div>
 
+    <!-- Banner sin celular -->
+    <div x-show="mostrarSinCelular && sinCelularList.length > 0"
+         style="margin-bottom:24px; background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.25); border-radius:10px; padding:14px 16px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
+            <div style="display:flex; gap:10px; align-items:flex-start;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                <div>
+                    <p style="font-size:13px; font-weight:600; color:#f59e0b; margin:0 0 6px;">
+                        No se pudo enviar a <span x-text="sinCelularList.length"></span> cliente<span x-text="sinCelularList.length > 1 ? 's' : ''"></span> — sin número de celular
+                    </p>
+                    <ul style="margin:0; padding-left:16px; font-size:12px; color:#a1a1aa; line-height:1.8;">
+                        <template x-for="nombre in sinCelularList" :key="nombre">
+                            <li x-text="nombre"></li>
+                        </template>
+                    </ul>
+                </div>
+            </div>
+            <button type="button" @click="mostrarSinCelular = false"
+                    style="background:transparent; border:none; color:#71717a; cursor:pointer; padding:2px; flex-shrink:0;"
+                    onmouseover="this.style.color='#f59e0b'" onmouseout="this.style.color='#71717a'">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
     <!-- Tabla -->
     <div style="background:#18181b; border:1px solid #27272a; border-radius:12px; overflow:hidden;">
         <table style="width:100%; border-collapse:collapse;">
@@ -468,6 +498,8 @@ function resumenes() {
         modalConfirm: false,
         enviando: false,
         progreso: { total: 0, procesados: 0, porcentaje: 0, clienteNombre: '', estado: '' },
+        sinCelularList: [],
+        mostrarSinCelular: false,
 
         modalEditarCliente: false,
         clienteEditar: {},
@@ -533,15 +565,25 @@ function resumenes() {
                         const dot = badge.querySelector('span');
                         if (dot) dot.style.background = c.color;
                     }
+                    if (data.estado === 'sin_celular') {
+                        if (!this.sinCelularList.includes(data.cliente_nombre)) {
+                            this.sinCelularList.push(data.cliente_nombre);
+                        }
+                    }
                     if (data.procesados >= data.total && data.total > 0) {
                         this.enviando = false;
                         clearTimeout(this._envioTimeout);
+                        if (this.sinCelularList.length > 0) {
+                            this.mostrarSinCelular = true;
+                        }
                     }
                 });
         },
 
         async enviarTodos() {
             this.enviando = true;
+            this.sinCelularList = [];
+            this.mostrarSinCelular = false;
             this.progreso = { total: 0, procesados: 0, porcentaje: 0, clienteNombre: '', estado: '' };
             // Fallback: si Reverb no responde en 10 min, liberar spinner
             this._envioTimeout = setTimeout(() => { this.enviando = false; }, 600_000);
