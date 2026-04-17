@@ -535,24 +535,26 @@
 </head>
 <body>
 
+
+
 {{-- ══════════════════════════════════ 1. HEADER ══════════════════════════════════ --}}
 <table style="width:100%; border-collapse:collapse; margin-bottom:0;">
     <tr>
         <td style="width:50%; vertical-align:middle; padding-right:20px;">
             <table style="border-collapse:collapse; width:100%;">
                 <tr>
-                    <td style="vertical-align:middle; width:70px; padding-right:14px;">
+                    <td style="vertical-align:top; width:70px; padding-right:14px; padding-top:2px;">
                         @if(!empty($logoBase64))
-                            <img src="{{ $logoBase64 }}" style="height:150px; width:auto;">
+                            <img src="{{ $logoBase64 }}" style="height:90px; width:auto;">
                         @else
                             <img src="/public/2.jpg" style="height:90px; width:auto;">
                         @endif
                     </td>
-                    <td style="vertical-align:middle;">
-                        <div style="font-size:10.5px; font-weight:600; color:#6b1a2a; letter-spacing:2px; text-transform:uppercase; line-height:1.5;">
-                            MUTUAL DE AMIGOS<br>CLUB SARMIENTO
+                    <td style="vertical-align:top; padding-top:2px;">
+                        <div style="font-size:12px; font-weight:600; color:#6b1a2a; letter-spacing:2px; text-transform:uppercase; line-height:1.5;">
+                            CLUB A.A.B. y M. SARMIENTO
                         </div>
-                        <div style="font-size:8px; color:#3a3035; line-height:1.8; margin-top:4px;">
+                        <div style="font-size:9px; color:#3a3035; line-height:1.8; margin-top:4px;">
                             Bv. Belgrano 1080 · Tel: 03472-480072 · Cel: 3472-547160<br>
                             LEONES — CÓRDOBA · IVA EXENTO<br>
                             mutualamigossarmiento@gmail.com<br>
@@ -564,7 +566,7 @@
             </table>
         </td>
         <td style="width:50%; vertical-align:bottom; text-align:right;">
-            <div style="font-family:'Playfair Display','DejaVu Sans',serif; font-size:46px; font-weight:900; color:#6b1a2a; letter-spacing:6px; line-height:1; text-transform:uppercase;">RESUMEN</div>
+            <div style="font-family:'Playfair Display','DejaVu Sans',serif; font-size:30px; font-weight:900; color:#6b1a2a; letter-spacing:6px; line-height:1; text-transform:uppercase;">RESUMEN</div>
             <div style="font-size:9px; color:#3a3035; letter-spacing:0.5px; margin-top:6px; line-height:1.9;">
                 <strong style="color:#6b1a2a; font-weight:600;">N°</strong> {{ $nro_socio ?? '—' }}
                 &nbsp;&nbsp;|&nbsp;&nbsp;
@@ -580,7 +582,7 @@
 </table>
 
 {{-- Divisor decorativo --}}
-<table style="width:100%; border-collapse:collapse; margin:14px 0 16px;">
+<table style="width:100%; border-collapse:collapse; margin:6px 0 10px;">
     <tr>
         <td style="height:2px; background:linear-gradient(to right, #6b1a2a 70%, #c9a96e 100%); padding:0;"></td>
         <td style="width:14px; text-align:right; vertical-align:middle; padding:0; font-size:16px; color:#c9a96e; padding-left:3px;">◆</td>
@@ -814,15 +816,15 @@
     </tr>
 </table>
 <hr style="border:none; border-top:1px solid #e8e0e3; margin-bottom:8px;">
-<div style="font-size:7.5px; color:#5a5055; text-align:center; line-height:1.8;">
+<div style="font-size:8px; color:#5a5055; text-align:center; line-height:1.8;">
     Ley 25.065 — Régimen de Tarjetas de Crédito y Compra. Tasa Nominal Anual (TNA) y Costo Financiero Total (CFT)
     informados al momento de la acreditación. Las tasas pueden variar según las condiciones pactadas.
     Ante consultas o reclamos comunicarse con la Mutual al número habitual o presentarse en la sede social.
 </div>
 <table style="width:100%; border-collapse:collapse; margin-top:6px;">
     <tr>
-        <td style="text-align:left; font-size:7.5px; color:#5a5055;">MUTUAL DE AMIGOS — CLUB SARMIENTO</td>
-        <td style="text-align:right; font-size:7.5px; color:#5a5055;">Resumen N° {{ $nro_socio ?? '—' }} &nbsp;|&nbsp; {{ $fecha_periodo ?? '' }}</td>
+        <td style="text-align:left; font-size:10px; color:#5a5055;">CLUB A.A.B. y M. SARMIENTO</td>
+        <td style="text-align:right; font-size:10px; color:#5a5055;">Resumen N° {{ $nro_socio ?? '—' }} &nbsp;|&nbsp; {{ $fecha_periodo ?? '' }}</td>
     </tr>
 </table>
 
