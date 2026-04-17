@@ -28,7 +28,7 @@
 
         body {
             font-family: 'DM Sans', 'DejaVu Sans', sans-serif;
-            font-size: 10px;
+            font-size: 11px;
             color: var(--ink);
             background: var(--cream);
             padding: 28px 30px 24px;
@@ -469,7 +469,7 @@
         }
         .cupon-val-dark {
             font-family: 'DM Mono', 'DejaVu Sans Mono', monospace;
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 500;
             color: var(--bordo);
         }
@@ -543,16 +543,16 @@
                 <tr>
                     <td style="vertical-align:middle; width:70px; padding-right:14px;">
                         @if(!empty($logoBase64))
-                            <img src="{{ $logoBase64 }}" style="height:52px; width:auto;">
+                            <img src="{{ $logoBase64 }}" style="height:150px; width:auto;">
                         @else
-                            <img src="/public/2.jpg" style="height:52px; width:auto;">
+                            <img src="/public/2.jpg" style="height:90px; width:auto;">
                         @endif
                     </td>
                     <td style="vertical-align:middle;">
-                        <div style="font-size:9.5px; font-weight:600; color:#6b1a2a; letter-spacing:2px; text-transform:uppercase; line-height:1.5;">
+                        <div style="font-size:10.5px; font-weight:600; color:#6b1a2a; letter-spacing:2px; text-transform:uppercase; line-height:1.5;">
                             MUTUAL DE AMIGOS<br>CLUB SARMIENTO
                         </div>
-                        <div style="font-size:7px; color:#8a7880; line-height:1.8; margin-top:4px;">
+                        <div style="font-size:8px; color:#3a3035; line-height:1.8; margin-top:4px;">
                             Bv. Belgrano 1080 · Tel: 03472-480072 · Cel: 3472-547160<br>
                             LEONES — CÓRDOBA · IVA EXENTO<br>
                             mutualamigossarmiento@gmail.com<br>
@@ -564,15 +564,15 @@
             </table>
         </td>
         <td style="width:50%; vertical-align:bottom; text-align:right;">
-            <div style="font-family:'Playfair Display','DejaVu Sans',serif; font-size:42px; font-weight:900; color:#6b1a2a; letter-spacing:6px; line-height:1; text-transform:uppercase;">RESUMEN</div>
-            <div style="font-size:8px; color:#8a7880; letter-spacing:0.5px; margin-top:6px; line-height:1.9;">
+            <div style="font-family:'Playfair Display','DejaVu Sans',serif; font-size:46px; font-weight:900; color:#6b1a2a; letter-spacing:6px; line-height:1; text-transform:uppercase;">RESUMEN</div>
+            <div style="font-size:9px; color:#3a3035; letter-spacing:0.5px; margin-top:6px; line-height:1.9;">
                 <strong style="color:#6b1a2a; font-weight:600;">N°</strong> {{ $nro_socio ?? '—' }}
                 &nbsp;&nbsp;|&nbsp;&nbsp;
                 <strong style="color:#6b1a2a; font-weight:600;">Período:</strong> {{ $fecha_periodo ?? '—' }}
                 &nbsp;&nbsp;|&nbsp;&nbsp;
                 <strong style="color:#6b1a2a; font-weight:600;">Vencimiento:</strong> {{ $fecha_vencimiento ?? '—' }}
             </div>
-            <div style="font-size:7px; color:#c8bcc0; margin-top:3px;">
+            <div style="font-size:8px; color:#5a5055; margin-top:3px;">
                 CUIT: 30-52715206-9 · Ing. Brutos: Exento · ANSeS: 52715206
             </div>
         </td>
@@ -583,7 +583,7 @@
 <table style="width:100%; border-collapse:collapse; margin:14px 0 16px;">
     <tr>
         <td style="height:2px; background:linear-gradient(to right, #6b1a2a 70%, #c9a96e 100%); padding:0;"></td>
-        <td style="width:14px; text-align:right; vertical-align:middle; padding:0; font-size:14px; color:#c9a96e; padding-left:3px;">◆</td>
+        <td style="width:14px; text-align:right; vertical-align:middle; padding:0; font-size:16px; color:#c9a96e; padding-left:3px;">◆</td>
     </tr>
 </table>
 
@@ -591,8 +591,8 @@
 <table style="width:100%; border-collapse:collapse; margin-bottom:16px; background:#ffffff; border:1px solid #e8e0e3; border-top:3px solid #6b1a2a;">
     <tr>
         <td style="padding:12px 16px; vertical-align:middle;">
-            <div style="font-family:'Playfair Display','DejaVu Sans',serif; font-size:16px; font-weight:700; color:#4a1020; letter-spacing:0.5px; margin-bottom:4px;">{{ $nombre_completo ?? '—' }}</div>
-            <div style="font-size:8px; color:#8a7880; letter-spacing:0.3px; line-height:1.7;">
+            <div style="font-family:'Playfair Display','DejaVu Sans',serif; font-size:18px; font-weight:700; color:#4a1020; letter-spacing:0.5px; margin-bottom:4px;">{{ $nombre_completo ?? '—' }}</div>
+            <div style="font-size:9px; color:#3a3035; letter-spacing:0.3px; line-height:1.7;">
                 {{ $direccion ?? '' }}{{ !empty($localidad) ? ' — ' . $localidad : '' }}
                 @if(!empty($nro_tarjeta))
                     &nbsp;&nbsp;·&nbsp;&nbsp;N° Tarjeta: {{ $nro_tarjeta }}
@@ -600,8 +600,8 @@
             </div>
         </td>
         <td style="padding:12px 16px; vertical-align:middle; text-align:right; width:150px;">
-            <div style="font-size:6.5px; letter-spacing:1.5px; text-transform:uppercase; color:#c8bcc0; margin-bottom:4px;">N° Socio</div>
-            <div style="background:#6b1a2a; color:#ffffff; font-family:'DejaVu Sans Mono',monospace; font-size:8.5px; font-weight:500; letter-spacing:1px; padding:5px 10px; display:inline-block;">{{ $nro_socio ?? '—' }}</div>
+            <div style="font-size:7.5px; letter-spacing:1.5px; text-transform:uppercase; color:#5a5055; margin-bottom:4px;">N° Socio</div>
+            <div style="background:#6b1a2a; color:#ffffff; font-family:'DejaVu Sans Mono',monospace; font-size:9.5px; font-weight:500; letter-spacing:1px; padding:5px 10px; display:inline-block;">{{ $nro_socio ?? '—' }}</div>
         </td>
     </tr>
 </table>
@@ -612,29 +612,29 @@
         {{-- Saldo Actual — hero card --}}
         <td style="width:25%; padding-right:8px; vertical-align:top;">
             <div style="background:#6b1a2a; padding:11px 14px; position:relative; overflow:hidden;">
-                <div style="font-size:6.5px; text-transform:uppercase; letter-spacing:1.5px; font-weight:700; color:rgba(201,169,110,0.85); margin-bottom:7px;">Saldo Actual</div>
-                <div style="font-family:'DejaVu Sans Mono',monospace; font-size:16px; font-weight:700; color:#ffffff; letter-spacing:-0.3px;">$ {{ $saldo_actual ?? '0.00' }}</div>
+                <div style="font-size:7.5px; text-transform:uppercase; letter-spacing:1.5px; font-weight:700; color:rgba(201,169,110,0.85); margin-bottom:7px;">Saldo Actual</div>
+                <div style="font-family:'DejaVu Sans Mono',monospace; font-size:18px; font-weight:700; color:#ffffff; letter-spacing:-0.3px;">$ {{ $saldo_actual ?? '0.00' }}</div>
             </div>
         </td>
         {{-- Pago Mínimo --}}
         <td style="width:25%; padding-right:8px; vertical-align:top;">
             <div style="background:#ffffff; border:1px solid #e8e0e3; border-top:2px solid #6b1a2a; padding:11px 14px;">
-                <div style="font-size:6.5px; text-transform:uppercase; letter-spacing:1.5px; font-weight:700; color:#c8bcc0; margin-bottom:7px;">Pago Mínimo</div>
-                <div style="font-family:'DejaVu Sans Mono',monospace; font-size:15px; font-weight:700; color:#6b1a2a;">$ {{ $pago_minimo ?? '0.00' }}</div>
+                <div style="font-size:7.5px; text-transform:uppercase; letter-spacing:1.5px; font-weight:700; color:#5a5055; margin-bottom:7px;">Pago Mínimo</div>
+                <div style="font-family:'DejaVu Sans Mono',monospace; font-size:17px; font-weight:700; color:#6b1a2a;">$ {{ $pago_minimo ?? '0.00' }}</div>
             </div>
         </td>
         {{-- Saldo Anterior --}}
         <td style="width:25%; padding-right:8px; vertical-align:top;">
             <div style="background:#ffffff; border:1px solid #e8e0e3; border-top:2px solid #6b1a2a; padding:11px 14px;">
-                <div style="font-size:6.5px; text-transform:uppercase; letter-spacing:1.5px; font-weight:700; color:#c8bcc0; margin-bottom:7px;">Saldo Anterior</div>
-                <div style="font-family:'DejaVu Sans Mono',monospace; font-size:15px; font-weight:700; color:#6b1a2a;">$ {{ $saldo_anterior ?? '0.00' }}</div>
+                <div style="font-size:7.5px; text-transform:uppercase; letter-spacing:1.5px; font-weight:700; color:#5a5055; margin-bottom:7px;">Saldo Anterior</div>
+                <div style="font-family:'DejaVu Sans Mono',monospace; font-size:17px; font-weight:700; color:#6b1a2a;">$ {{ $saldo_anterior ?? '0.00' }}</div>
             </div>
         </td>
         {{-- Vencimiento --}}
         <td style="width:25%; vertical-align:top;">
             <div style="background:#ffffff; border:1px solid #e8e0e3; border-top:2px solid #c9a96e; padding:11px 14px;">
-                <div style="font-size:6.5px; text-transform:uppercase; letter-spacing:1.5px; font-weight:700; color:#c8bcc0; margin-bottom:7px;">Vencimiento</div>
-                <div style="font-family:'DejaVu Sans Mono',monospace; font-size:15px; font-weight:700; color:#6b1a2a;">{{ $fecha_vencimiento ?? '—' }}</div>
+                <div style="font-size:7.5px; text-transform:uppercase; letter-spacing:1.5px; font-weight:700; color:#5a5055; margin-bottom:7px;">Vencimiento</div>
+                <div style="font-family:'DejaVu Sans Mono',monospace; font-size:17px; font-weight:700; color:#6b1a2a;">{{ $fecha_vencimiento ?? '—' }}</div>
             </div>
         </td>
     </tr>
@@ -644,12 +644,12 @@
 <table style="width:100%; border-collapse:collapse; margin-bottom:20px;">
     <tr>
         <td style="width:50%; background:#fdf5f6; border:1px solid #e8e0e3; border-right:none; padding:9px 14px; vertical-align:middle;">
-            <div style="font-size:6.5px; text-transform:uppercase; letter-spacing:1.2px; color:#8a7880; font-weight:600; margin-bottom:3px;">Límite de Compra</div>
-            <div style="font-family:'DejaVu Sans Mono',monospace; font-size:13px; font-weight:600; color:#4a3840;">$ {{ $limite_compra ?? '0.00' }}</div>
+            <div style="font-size:7.5px; text-transform:uppercase; letter-spacing:1.2px; color:#3a3035; font-weight:600; margin-bottom:3px;">Límite de Compra</div>
+            <div style="font-family:'DejaVu Sans Mono',monospace; font-size:14px; font-weight:600; color:#1e1820;">$ {{ $limite_compra ?? '0.00' }}</div>
         </td>
         <td style="width:50%; background:#fdf5f6; border:1px solid #e8e0e3; padding:9px 14px; vertical-align:middle;">
-            <div style="font-size:6.5px; text-transform:uppercase; letter-spacing:1.2px; color:#8a7880; font-weight:600; margin-bottom:3px;">Consumo Actual</div>
-            <div style="font-family:'DejaVu Sans Mono',monospace; font-size:13px; font-weight:600; color:#4a3840;">$ {{ $consumo_actual ?? '0.00' }}</div>
+            <div style="font-size:7.5px; text-transform:uppercase; letter-spacing:1.2px; color:#3a3035; font-weight:600; margin-bottom:3px;">Consumo Actual</div>
+            <div style="font-family:'DejaVu Sans Mono',monospace; font-size:14px; font-weight:600; color:#1e1820;">$ {{ $consumo_actual ?? '0.00' }}</div>
         </td>
     </tr>
 </table>
@@ -659,19 +659,19 @@
     {{-- Section title --}}
     <table style="width:100%; border-collapse:collapse; margin-bottom:8px;">
         <tr>
-            <td style="font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:2.5px; color:#6b1a2a; white-space:nowrap; padding-right:12px; vertical-align:middle; width:1%;">Movimientos del Período</td>
+            <td style="font-size:7.5px; font-weight:700; text-transform:uppercase; letter-spacing:2.5px; color:#6b1a2a; white-space:nowrap; padding-right:12px; vertical-align:middle; width:1%;">Movimientos del Período</td>
             <td style="border-bottom:1px solid #e8e0e3; vertical-align:middle;"></td>
         </tr>
     </table>
 
-    <table style="width:100%; border-collapse:collapse; margin-bottom:20px; font-size:8.5px;">
+    <table style="width:100%; border-collapse:collapse; margin-bottom:20px; font-size:9.5px;">
         <thead>
         <tr style="background:#4a1020;">
-            <th style="padding:8px 10px; text-align:left; font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:rgba(201,169,110,0.9); width:13%;">Fecha</th>
-            <th style="padding:8px 10px; text-align:left; font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:rgba(201,169,110,0.9); width:14%;">Comprobante</th>
-            <th style="padding:8px 10px; text-align:left; font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:rgba(201,169,110,0.9);">Descripción</th>
-            <th style="padding:8px 10px; text-align:left; font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:rgba(201,169,110,0.9); width:9%;">Cuota</th>
-            <th style="padding:8px 10px; text-align:right; font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:rgba(201,169,110,0.9); width:17%;">Importe</th>
+            <th style="padding:8px 10px; text-align:left; font-size:7.5px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:rgba(201,169,110,1); width:13%;">Fecha</th>
+            <th style="padding:8px 10px; text-align:left; font-size:7.5px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:rgba(201,169,110,1); width:14%;">Comprobante</th>
+            <th style="padding:8px 10px; text-align:left; font-size:7.5px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:rgba(201,169,110,1);">Descripción</th>
+            <th style="padding:8px 10px; text-align:left; font-size:7.5px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:rgba(201,169,110,1); width:9%;">Cuota</th>
+            <th style="padding:8px 10px; text-align:right; font-size:7.5px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:rgba(201,169,110,1); width:17%;">Importe</th>
         </tr>
         </thead>
         <tbody>
@@ -683,11 +683,11 @@
                 $bgRow = $i % 2 === 0 ? '#fdf5f6' : '#ffffff';
             @endphp
             <tr style="background:{{ $bgRow }}; border-bottom:1px solid #e8e0e3;">
-                <td style="padding:6px 10px; color:#1a1214; font-size:8.5px;">{{ $mov['fecha'] ?? '' }}</td>
-                <td style="padding:6px 10px; color:#1a1214; font-size:8.5px;">{{ $mov['comprobante'] ?? '' }}</td>
-                <td style="padding:6px 10px; color:#1a1214; font-size:8.5px;">{{ $mov['descripcion'] ?? '' }}</td>
-                <td style="padding:6px 10px; color:#1a1214; font-size:8.5px;">{{ $mov['cuota'] ?? '' }}</td>
-                <td style="padding:6px 10px; text-align:right; font-family:'DejaVu Sans Mono',monospace; font-size:8px; {{ $esPago ? 'color:#15803d; font-weight:600;' : 'color:#6b1a2a;' }}">
+                <td style="padding:6px 10px; color:#1a1214; font-size:9.5px;">{{ $mov['fecha'] ?? '' }}</td>
+                <td style="padding:6px 10px; color:#1a1214; font-size:9.5px;">{{ $mov['comprobante'] ?? '' }}</td>
+                <td style="padding:6px 10px; color:#1a1214; font-size:9.5px;">{{ $mov['descripcion'] ?? '' }}</td>
+                <td style="padding:6px 10px; color:#1a1214; font-size:9.5px;">{{ $mov['cuota'] ?? '' }}</td>
+                <td style="padding:6px 10px; text-align:right; font-family:'DejaVu Sans Mono',monospace; font-size:9px; {{ $esPago ? 'color:#15803d; font-weight:600;' : 'color:#6b1a2a;' }}">
                     {{ $mov['importe'] ?? '' }}
                 </td>
             </tr>
@@ -695,8 +695,8 @@
         </tbody>
         <tfoot>
         <tr>
-            <td colspan="4" style="padding:7px 10px; background:#f7f0f2; border-top:2px solid #6b1a2a; font-weight:700; font-size:8.5px; color:#4a1020; text-align:right; letter-spacing:0.5px;">Subtotal del período:</td>
-            <td style="padding:7px 10px; background:#f7f0f2; border-top:2px solid #6b1a2a; font-weight:700; font-size:9px; color:#4a1020; text-align:right; font-family:'DejaVu Sans Mono',monospace;">$ {{ $consumo_actual ?? '0.00' }}</td>
+            <td colspan="4" style="padding:7px 10px; background:#f7f0f2; border-top:2px solid #6b1a2a; font-weight:700; font-size:9.5px; color:#4a1020; text-align:right; letter-spacing:0.5px;">Subtotal del período:</td>
+            <td style="padding:7px 10px; background:#f7f0f2; border-top:2px solid #6b1a2a; font-weight:700; font-size:10px; color:#4a1020; text-align:right; font-family:'DejaVu Sans Mono',monospace;">$ {{ $consumo_actual ?? '0.00' }}</td>
         </tr>
         </tfoot>
     </table>
@@ -705,7 +705,7 @@
 {{-- ══════════════════════════════════ 5. RESUMEN DEL PERÍODO ══════════════════════════════════ --}}
 <table style="width:100%; border-collapse:collapse; margin-bottom:8px;">
     <tr>
-        <td style="font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:2.5px; color:#6b1a2a; white-space:nowrap; padding-right:12px; vertical-align:middle; width:1%;">Resumen del Período</td>
+        <td style="font-size:7.5px; font-weight:700; text-transform:uppercase; letter-spacing:2.5px; color:#6b1a2a; white-space:nowrap; padding-right:12px; vertical-align:middle; width:1%;">Resumen del Período</td>
         <td style="border-bottom:1px solid #e8e0e3; vertical-align:middle;"></td>
     </tr>
 </table>
@@ -714,79 +714,80 @@
     <tr>
         <td style="width:25%; padding-right:7px; vertical-align:top;">
             <div style="border:1px solid #e8e0e3; border-left:3px solid #c9a96e; background:#ffffff; padding:9px 12px;">
-                <div style="font-size:6.5px; text-transform:uppercase; letter-spacing:1px; color:#8a7880; font-weight:600; margin-bottom:5px;">Gastos de Resumen</div>
-                <div style="font-family:'DejaVu Sans Mono',monospace; font-size:12px; font-weight:600; color:#6b1a2a;">$ {{ $gastos_resumen ?? '0.00' }}</div>
+                <div style="font-size:7.5px; text-transform:uppercase; letter-spacing:1px; color:#3a3035; font-weight:600; margin-bottom:5px;">Gastos de Resumen</div>
+                <div style="font-family:'DejaVu Sans Mono',monospace; font-size:13px; font-weight:600; color:#6b1a2a;">$ {{ $gastos_resumen ?? '0.00' }}</div>
             </div>
         </td>
         <td style="width:25%; padding-right:7px; vertical-align:top;">
             <div style="border:1px solid #e8e0e3; border-left:3px solid #c9a96e; background:#ffffff; padding:9px 12px;">
-                <div style="font-size:6.5px; text-transform:uppercase; letter-spacing:1px; color:#8a7880; font-weight:600; margin-bottom:5px;">Sellado</div>
-                <div style="font-family:'DejaVu Sans Mono',monospace; font-size:12px; font-weight:600; color:#6b1a2a;">$ {{ $sellado ?? '0.00' }}</div>
+                <div style="font-size:7.5px; text-transform:uppercase; letter-spacing:1px; color:#3a3035; font-weight:600; margin-bottom:5px;">Sellado</div>
+                <div style="font-family:'DejaVu Sans Mono',monospace; font-size:13px; font-weight:600; color:#6b1a2a;">$ {{ $sellado ?? '0.00' }}</div>
             </div>
         </td>
         <td style="width:25%; padding-right:7px; vertical-align:top;">
             <div style="border:1px solid #e8e0e3; border-left:3px solid #c9a96e; background:#ffffff; padding:9px 12px;">
-                <div style="font-size:6.5px; text-transform:uppercase; letter-spacing:1px; color:#8a7880; font-weight:600; margin-bottom:5px;">Saldo Actual</div>
-                <div style="font-family:'DejaVu Sans Mono',monospace; font-size:12px; font-weight:600; color:#6b1a2a;">$ {{ $saldo_actual ?? '0.00' }}</div>
+                <div style="font-size:7.5px; text-transform:uppercase; letter-spacing:1px; color:#3a3035; font-weight:600; margin-bottom:5px;">Saldo Actual</div>
+                <div style="font-family:'DejaVu Sans Mono',monospace; font-size:13px; font-weight:600; color:#6b1a2a;">$ {{ $saldo_actual ?? '0.00' }}</div>
             </div>
         </td>
         <td style="width:25%; vertical-align:top;">
             <div style="border:1px solid #e8e0e3; border-left:3px solid #c9a96e; background:#ffffff; padding:9px 12px;">
-                <div style="font-size:6.5px; text-transform:uppercase; letter-spacing:1px; color:#8a7880; font-weight:600; margin-bottom:5px;">Consumo Actual</div>
-                <div style="font-family:'DejaVu Sans Mono',monospace; font-size:12px; font-weight:600; color:#6b1a2a;">$ {{ $consumo_actual ?? '0.00' }}</div>
+                <div style="font-size:7.5px; text-transform:uppercase; letter-spacing:1px; color:#3a3035; font-weight:600; margin-bottom:5px;">Consumo Actual</div>
+                <div style="font-family:'DejaVu Sans Mono',monospace; font-size:13px; font-weight:600; color:#6b1a2a;">$ {{ $consumo_actual ?? '0.00' }}</div>
             </div>
         </td>
     </tr>
 </table>
 
 {{-- ══════════════════════════════════ 6. AVISO ══════════════════════════════════ --}}
-<div style="background:#f0fdf4; border:1px solid #bbf7d0; border-left:3px solid #16a34a; padding:8px 13px; margin-bottom:16px; font-size:7.5px; color:#166534; line-height:1.7;">
-    <span style="font-weight:700; font-size:10px; margin-right:5px;">&#10003;</span>
+<div style="background:#f0fdf4; border:1px solid #bbf7d0; border-left:3px solid #16a34a; padding:8px 13px; margin-bottom:16px; font-size:8.5px; color:#166534; line-height:1.7;">
+    <span style="font-weight:700; font-size:11px; margin-right:5px;">&#10003;</span>
     Este resumen se considera <strong>ACEPTADO</strong> si no se presenta reclamo
     dentro de los 30 días de su recepción, de conformidad con la Ley 25.065 de
     Tarjetas de Crédito y la normativa vigente del Banco Central de la República Argentina.
 </div>
 
 {{-- ══════════════════════════════════ 7. CUPÓN DE PAGO ══════════════════════════════════ --}}
+<div style="page-break-before: always;"></div>
 <hr style="border:none; border-top:1.5px dashed #c8bcc0; margin:16px 0 12px;">
-<div style="font-size:7px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#8a7880; text-align:center; margin-bottom:10px;">✂ Cupón de Pago</div>
+<div style="font-size:8px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#3a3035; text-align:center; margin-bottom:10px;">✂ Cupón de Pago</div>
 
-<table style="width:100%; border-collapse:collapse; font-size:8.5px; margin-bottom:10px;">
+<table style="width:100%; border-collapse:collapse; font-size:9.5px; margin-bottom:10px;">
     <thead>
     <tr>
-        <th style="background:#f7f0f2; border:1px solid #e8e0e3; padding:5px 9px; font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#4a3840; text-align:left; width:28%;">Número Tarjeta</th>
-        <th style="background:#f7f0f2; border:1px solid #e8e0e3; padding:5px 9px; font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#4a3840; text-align:left; width:44%;">Titular</th>
-        <th style="background:#f7f0f2; border:1px solid #e8e0e3; padding:5px 9px; font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#4a3840; text-align:left; width:28%;">N° Resumen</th>
+        <th style="background:#f7f0f2; border:1px solid #e8e0e3; padding:5px 9px; font-size:7.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#1e1820; text-align:left; width:28%;">Número Tarjeta</th>
+        <th style="background:#f7f0f2; border:1px solid #e8e0e3; padding:5px 9px; font-size:7.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#1e1820; text-align:left; width:44%;">Titular</th>
+        <th style="background:#f7f0f2; border:1px solid #e8e0e3; padding:5px 9px; font-size:7.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#1e1820; text-align:left; width:28%;">N° Resumen</th>
     </tr>
     </thead>
     <tbody>
     <tr>
-        <td style="border:1px solid #e8e0e3; padding:8px 10px;"><span style="font-family:'DejaVu Sans Mono',monospace; font-size:10px; font-weight:600; color:#6b1a2a;">{{ $nro_tarjeta ?? '—' }}</span></td>
-        <td style="border:1px solid #e8e0e3; padding:8px 10px;"><span style="font-family:'DejaVu Sans Mono',monospace; font-size:10px; font-weight:600; color:#6b1a2a;">{{ $nombre_completo ?? '—' }}</span></td>
-        <td style="border:1px solid #e8e0e3; padding:8px 10px;"><span style="font-family:'DejaVu Sans Mono',monospace; font-size:10px; font-weight:600; color:#6b1a2a;">{{ $nro_socio ?? '—' }}</span></td>
+        <td style="border:1px solid #e8e0e3; padding:8px 10px;"><span style="font-family:'DejaVu Sans Mono',monospace; font-size:11px; font-weight:600; color:#6b1a2a;">{{ $nro_tarjeta ?? '—' }}</span></td>
+        <td style="border:1px solid #e8e0e3; padding:8px 10px;"><span style="font-family:'DejaVu Sans Mono',monospace; font-size:11px; font-weight:600; color:#6b1a2a;">{{ $nombre_completo ?? '—' }}</span></td>
+        <td style="border:1px solid #e8e0e3; padding:8px 10px;"><span style="font-family:'DejaVu Sans Mono',monospace; font-size:11px; font-weight:600; color:#6b1a2a;">{{ $nro_socio ?? '—' }}</span></td>
     </tr>
     </tbody>
     <thead>
     <tr>
-        <th colspan="2" style="background:#f7f0f2; border:1px solid #e8e0e3; padding:5px 9px; font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#4a3840; text-align:left;">Saldo Actual</th>
-        <th style="background:#f7f0f2; border:1px solid #e8e0e3; padding:5px 9px; font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#4a3840; text-align:left;">Pago Mínimo</th>
+        <th colspan="2" style="background:#f7f0f2; border:1px solid #e8e0e3; padding:5px 9px; font-size:7.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#1e1820; text-align:left;">Saldo Actual</th>
+        <th style="background:#f7f0f2; border:1px solid #e8e0e3; padding:5px 9px; font-size:7.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#1e1820; text-align:left;">Pago Mínimo</th>
     </tr>
     </thead>
     <tbody>
     <tr>
         <td colspan="2" style="border:1px solid #e8e0e3; padding:9px 10px; background:#4a1020;">
-            <span style="font-size:6px; text-transform:uppercase; letter-spacing:1px; color:rgba(201,169,110,0.75); display:block; margin-bottom:3px;">Saldo Actual</span>
-            <span style="font-family:'DejaVu Sans Mono',monospace; font-size:14px; font-weight:600; color:#ffffff;">$ {{ $saldo_actual ?? '0.00' }}</span>
+            <span style="font-size:7px; text-transform:uppercase; letter-spacing:1px; color:rgba(201,169,110,0.95); display:block; margin-bottom:3px;">Saldo Actual</span>
+            <span style="font-family:'DejaVu Sans Mono',monospace; font-size:16px; font-weight:600; color:#ffffff;">$ {{ $saldo_actual ?? '0.00' }}</span>
         </td>
         <td style="border:1px solid #e8e0e3; padding:9px 10px; background:#4a3840;">
-            <span style="font-size:6px; text-transform:uppercase; letter-spacing:1px; color:rgba(201,169,110,0.75); display:block; margin-bottom:3px;">Pago Mínimo</span>
-            <span style="font-family:'DejaVu Sans Mono',monospace; font-size:14px; font-weight:600; color:#ffffff;">$ {{ $pago_minimo ?? '0.00' }}</span>
+            <span style="font-size:7px; text-transform:uppercase; letter-spacing:1px; color:rgba(201,169,110,0.95); display:block; margin-bottom:3px;">Pago Mínimo</span>
+            <span style="font-family:'DejaVu Sans Mono',monospace; font-size:16px; font-weight:600; color:#ffffff;">$ {{ $pago_minimo ?? '0.00' }}</span>
         </td>
     </tr>
     </tbody>
     <thead>
     <tr>
-        <th colspan="3" style="background:#f7f0f2; border:1px solid #e8e0e3; padding:5px 9px; font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#4a3840; text-align:left;">Importe Abonado</th>
+        <th colspan="3" style="background:#f7f0f2; border:1px solid #e8e0e3; padding:5px 9px; font-size:7.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#1e1820; text-align:left;">Importe Abonado</th>
     </tr>
     </thead>
     <tbody>
@@ -796,7 +797,7 @@
     </tbody>
 </table>
 
-<div style="font-size:8px; color:#4a3840; line-height:2.5; letter-spacing:0.3px;">
+<div style="font-size:9px; color:#1e1820; line-height:2.5; letter-spacing:0.3px;">
     SON PESOS: <span style="display:inline-block; width:180px; border-bottom:1px solid #4a3840;">&nbsp;</span>
     &nbsp;&nbsp;&nbsp;&nbsp; FECHA: ___/___/___
     &nbsp;&nbsp;&nbsp;&nbsp; FIRMA: <span style="display:inline-block; width:140px; border-bottom:1px solid #4a3840;">&nbsp;</span>
@@ -806,22 +807,22 @@
 <table style="width:100%; border-collapse:collapse; margin:16px 0 10px;">
     <tr>
         <td style="text-align:center; padding:9px 14px; background:#fdf5f6; border:1px solid #e8e0e3; border-left:4px solid #c9a96e;">
-            <p style="font-size:9.5px; font-weight:700; color:#6b1a2a; letter-spacing:1.5px; text-transform:uppercase; margin:0;">
+            <p style="font-size:10.5px; font-weight:700; color:#6b1a2a; letter-spacing:1.5px; text-transform:uppercase; margin:0;">
                 PAGOS DE 8 a 13:00 hs &nbsp;·&nbsp; 17 a 18:30 hs
             </p>
         </td>
     </tr>
 </table>
 <hr style="border:none; border-top:1px solid #e8e0e3; margin-bottom:8px;">
-<div style="font-size:6.5px; color:#c8bcc0; text-align:center; line-height:1.8;">
+<div style="font-size:7.5px; color:#5a5055; text-align:center; line-height:1.8;">
     Ley 25.065 — Régimen de Tarjetas de Crédito y Compra. Tasa Nominal Anual (TNA) y Costo Financiero Total (CFT)
     informados al momento de la acreditación. Las tasas pueden variar según las condiciones pactadas.
     Ante consultas o reclamos comunicarse con la Mutual al número habitual o presentarse en la sede social.
 </div>
 <table style="width:100%; border-collapse:collapse; margin-top:6px;">
     <tr>
-        <td style="text-align:left; font-size:6.5px; color:#c8bcc0;">MUTUAL DE AMIGOS — CLUB SARMIENTO</td>
-        <td style="text-align:right; font-size:6.5px; color:#c8bcc0;">Resumen N° {{ $nro_socio ?? '—' }} &nbsp;|&nbsp; {{ $fecha_periodo ?? '' }}</td>
+        <td style="text-align:left; font-size:7.5px; color:#5a5055;">MUTUAL DE AMIGOS — CLUB SARMIENTO</td>
+        <td style="text-align:right; font-size:7.5px; color:#5a5055;">Resumen N° {{ $nro_socio ?? '—' }} &nbsp;|&nbsp; {{ $fecha_periodo ?? '' }}</td>
     </tr>
 </table>
 
