@@ -28,20 +28,29 @@ class ResumenEnvioTest extends TestCase
     }
 
     /** @test */
-    public function resumen_sin_celular_queda_en_sin_celular(): void
+    public function enviar_todos_no_despacha_job_para_clientes_sin_celular(): void
     {
-        $cliente = Cliente::factory()->sinCelular()->create();
-        $resumen = Resumen::factory()->create([
-            'cliente_id' => $cliente->id,
-            'estado'     => 'pendiente',
-        ]);
+        Queue::fake();
 
-        // Simular la lógica del job
-        if (empty($cliente->celular)) {
-            $resumen->update(['estado' => 'sin_celular']);
-        }
+        $periodo       = now()->format('Y-m');
+        $clienteCon    = Cliente::factory()->create();
+        $clienteSin    = Cliente::factory()->sinCelular()->create();
 
-        $this->assertEquals('sin_celular', $resumen->fresh()->estado);
+        Resumen::factory()->create(['cliente_id' => $clienteCon->id, 'estado' => 'pendiente', 'periodo' => $periodo]);
+        Resumen::factory()->create(['cliente_id' => $clienteSin->id, 'estado' => 'pendiente', 'periodo' => $periodo]);
+
+        $admin = User::factory()->admin()->create();
+
+        $response = $this->actingAs($admin)->postJson('/resumenes/enviar-todos');
+
+        $response->assertOk();
+        Queue::assertPushed(EnviarResumenJob::class, 1);
+
+        // El sin celular sigue en pendiente
+        $this->assertEquals('pendiente', Resumen::where('cliente_id', $clienteSin->id)->first()->estado);
+
+        // La respuesta incluye el nombre del cliente sin celular
+        $response->assertJsonPath('sin_celular.0', $clienteSin->nombre_completo);
     }
 
     /** @test */

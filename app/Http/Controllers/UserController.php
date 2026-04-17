@@ -12,7 +12,8 @@ class UserController extends Controller
 {
     public function index()
     {
-        $usuarios = User::where('role', 'empleado')
+        $usuarios = User::whereIn('role', ['empleado', 'turnero'])
+                        ->orderBy('role')
                         ->orderBy('box_nombre')
                         ->get();
 
@@ -25,15 +26,16 @@ class UserController extends Controller
             'name'       => ['required', 'string', 'max:100'],
             'email'      => ['required', 'email', 'max:150', 'unique:users,email'],
             'password'   => ['required', 'confirmed', Password::min(8)],
-            'box_nombre' => ['required', 'string', 'max:50'],
+            'role'       => ['required', Rule::in(['empleado', 'turnero'])],
+            'box_nombre' => ['nullable', 'string', 'max:50'],
         ]);
 
         User::create([
             'name'       => $data['name'],
             'email'      => $data['email'],
             'password'   => Hash::make($data['password']),
-            'role'       => 'empleado',
-            'box_nombre' => $data['box_nombre'],
+            'role'       => $data['role'],
+            'box_nombre' => $data['box_nombre'] ?: null,
             'box_status' => 'libre',
         ]);
 
@@ -42,19 +44,20 @@ class UserController extends Controller
 
     public function update(Request $request, User $usuario)
     {
-        // Proteger: no editar el admin por esta ruta
         abort_if($usuario->isAdmin(), 403);
 
         $data = $request->validate([
             'name'       => ['required', 'string', 'max:100'],
             'email'      => ['required', 'email', 'max:150', Rule::unique('users', 'email')->ignore($usuario->id)],
-            'box_nombre' => ['required', 'string', 'max:50'],
+            'role'       => ['required', Rule::in(['empleado', 'turnero'])],
+            'box_nombre' => ['nullable', 'string', 'max:50'],
             'password'   => ['nullable', 'confirmed', Password::min(8)],
         ]);
 
         $usuario->name       = $data['name'];
         $usuario->email      = $data['email'];
-        $usuario->box_nombre = $data['box_nombre'];
+        $usuario->role       = $data['role'];
+        $usuario->box_nombre = $data['box_nombre'] ?: null;
 
         if (!empty($data['password'])) {
             $usuario->password = Hash::make($data['password']);

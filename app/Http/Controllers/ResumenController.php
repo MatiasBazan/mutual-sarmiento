@@ -27,6 +27,15 @@ class ResumenController extends Controller
             ->groupBy('estado')
             ->pluck('total', 'estado');
 
+        $sinCelularCount = Resumen::with('cliente')
+            ->where('periodo', $periodoActual)
+            ->whereIn('estado', [Resumen::PENDIENTE, Resumen::ERROR])
+            ->get()
+            ->filter(fn($r) => empty($r->cliente->celular))
+            ->count();
+
+        $stats['sin_celular'] = $sinCelularCount;
+
         return view('resumenes.index', compact('resumenes', 'stats', 'periodoActual'));
     }
 
@@ -143,7 +152,7 @@ class ResumenController extends Controller
     {
         $periodo = now()->format('Y-m');
 
-        // Incluye pendientes + error (reintento) — excluye notificado y sin_celular
+        // Incluye pendientes + error (reintento) — excluye notificado
         $resumenes = Resumen::with('cliente')
             ->where('periodo', $periodo)
             ->whereIn('estado', [Resumen::PENDIENTE, Resumen::ERROR])
@@ -155,24 +164,33 @@ class ResumenController extends Controller
             ], 422);
         }
 
+        // Separar los que tienen celular de los que no
+        $conCelular    = $resumenes->filter(fn($r) => !empty($r->cliente->celular));
+        $sinCelular    = $resumenes->filter(fn($r) =>  empty($r->cliente->celular));
+
+        if ($conCelular->isEmpty()) {
+            return response()->json([
+                'message' => 'Todos los clientes pendientes no tienen celular registrado.',
+            ], 422);
+        }
+
         // Resetear los que estaban en error a pendiente antes de despachar
-        $resumenes->each(function ($r) {
+        $conCelular->each(function ($r) {
             if ($r->estado === Resumen::ERROR) {
                 $r->update(['estado' => Resumen::PENDIENTE, 'intentos' => 0]);
             }
         });
 
-        $total = $resumenes->count();
+        $total = $conCelular->count();
 
-        // BUG 4 FIX — ya no se pasan $total ni $index al job;
-        // el progreso se calcula dinámicamente en el job consultando la BD
-        foreach ($resumenes as $resumen) {
+        foreach ($conCelular as $resumen) {
             EnviarResumenJob::dispatch($resumen->id);
         }
 
         return response()->json([
-            'message' => "Se despacharon {$total} trabajos de envío.",
-            'total'   => $total,
+            'message'     => "Se despacharon {$total} trabajos de envío.",
+            'total'       => $total,
+            'sin_celular' => $sinCelular->map(fn($r) => $r->cliente->nombre_completo)->values(),
         ]);
     }
 

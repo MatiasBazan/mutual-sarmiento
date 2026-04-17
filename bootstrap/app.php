@@ -12,7 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-            'admin' => \App\Http\Middleware\EsAdmin::class,
+            'admin'       => \App\Http\Middleware\EsAdmin::class,
+            'no-turnero'  => \App\Http\Middleware\NoEsTurnero::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

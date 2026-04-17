@@ -35,6 +35,7 @@
     @auth
     <!-- Nav links -->
     <div style="display:flex; gap:2px; flex:1;">
+        @unless(auth()->user()->isTurnero())
         <a href="{{ route('resumenes.index') }}"
            style="padding:6px 12px; border-radius:6px; font-size:13px; transition:all 0.15s;
                   color:{{ request()->routeIs('resumenes.*') ? '#fafafa' : '#a1a1aa' }};
@@ -55,6 +56,7 @@
             Usuarios
         </a>
         @endif
+        @endunless
         <a href="{{ route('turnero.panel') }}"
            style="padding:6px 12px; border-radius:6px; font-size:13px; transition:all 0.15s;
                   color:{{ request()->routeIs('turnero.panel') ? '#fafafa' : '#a1a1aa' }};

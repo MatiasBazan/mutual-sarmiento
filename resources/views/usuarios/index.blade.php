@@ -19,6 +19,7 @@
                 <tr style="background:#27272a;">
                     <th style="padding:10px 20px; text-align:left; font-size:11px; font-weight:600; color:#71717a; letter-spacing:0.05em; text-transform:uppercase;">Nombre</th>
                     <th style="padding:10px 20px; text-align:left; font-size:11px; font-weight:600; color:#71717a; letter-spacing:0.05em; text-transform:uppercase;">Email</th>
+                    <th style="padding:10px 20px; text-align:left; font-size:11px; font-weight:600; color:#71717a; letter-spacing:0.05em; text-transform:uppercase;">Rol</th>
                     <th style="padding:10px 20px; text-align:left; font-size:11px; font-weight:600; color:#71717a; letter-spacing:0.05em; text-transform:uppercase;">Box</th>
                     <th style="padding:10px 20px; text-align:left; font-size:11px; font-weight:600; color:#71717a; letter-spacing:0.05em; text-transform:uppercase;">Estado</th>
                     <th style="padding:10px 20px; text-align:left; font-size:11px; font-weight:600; color:#71717a; letter-spacing:0.05em; text-transform:uppercase;">Acciones</th>
@@ -39,6 +40,17 @@
                     onmouseout="this.style.background=''">
                     <td style="padding:12px 20px; font-size:13px; font-weight:500; color:#fafafa;">{{ $u->name }}</td>
                     <td style="padding:12px 20px; font-size:13px; color:#a1a1aa;">{{ $u->email }}</td>
+                    <td style="padding:12px 20px;">
+                        @if($u->role === 'turnero')
+                            <span style="display:inline-flex; align-items:center; gap:5px; padding:2px 8px; border-radius:20px; font-size:11px; font-weight:600; letter-spacing:0.05em; background:rgba(139,92,246,0.1); color:#a78bfa; border:1px solid rgba(139,92,246,0.2);">
+                                Turnero
+                            </span>
+                        @else
+                            <span style="display:inline-flex; align-items:center; gap:5px; padding:2px 8px; border-radius:20px; font-size:11px; font-weight:600; letter-spacing:0.05em; background:rgba(96,165,250,0.1); color:#60a5fa; border:1px solid rgba(96,165,250,0.2);">
+                                Empleado
+                            </span>
+                        @endif
+                    </td>
                     <td style="padding:12px 20px; font-size:13px; color:#a1a1aa;">{{ $u->box_nombre ?? '—' }}</td>
                     <td style="padding:12px 20px;">
                         <span style="display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; letter-spacing:0.05em; background:{{ $badge[0] }}; color:{{ $badge[1] }}; border:1px solid {{ $badge[2] }};">
@@ -60,7 +72,7 @@
 
                             <!-- Editar -->
                             <button type="button" title="Editar"
-                                    @click="abrirEditar({{ $u->id }}, {{ Js::from($u->name) }}, {{ Js::from($u->email) }}, {{ Js::from($u->box_nombre) }})"
+                                    @click="abrirEditar({{ $u->id }}, {{ Js::from($u->name) }}, {{ Js::from($u->email) }}, {{ Js::from($u->role) }}, {{ Js::from($u->box_nombre) }})"
                                     style="background:transparent; border:none; cursor:pointer; color:#71717a; padding:6px; border-radius:6px; transition:color 0.15s; display:flex;"
                                     onmouseover="this.style.color='#fafafa'"
                                     onmouseout="this.style.color='#71717a'">
@@ -89,7 +101,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="5" style="padding:48px 20px; text-align:center; font-size:13px; color:#71717a;">
+                    <td colspan="6" style="padding:48px 20px; text-align:center; font-size:13px; color:#71717a;">
                         No hay empleados. Creá el primero con el botón de arriba.
                     </td>
                 </tr>
@@ -167,6 +179,15 @@
                         <input type="text" name="name" x-model="form.name" required
                                style="width:100%; background:#27272a; border:1px solid #3f3f46; border-radius:7px; padding:8px 12px; font-size:13px; color:#fafafa; outline:none;"
                                onfocus="this.style.borderColor='#71717a'" onblur="this.style.borderColor='#3f3f46'">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:11px; font-weight:600; color:#71717a; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px;">Rol</label>
+                        <select name="role" x-model="form.role" required
+                                style="width:100%; background:#27272a; border:1px solid #3f3f46; border-radius:7px; padding:8px 12px; font-size:13px; color:#fafafa; outline:none; cursor:pointer;"
+                                onfocus="this.style.borderColor='#71717a'" onblur="this.style.borderColor='#3f3f46'">
+                            <option value="empleado">Empleado</option>
+                            <option value="turnero">Turnero (solo box y TV)</option>
+                        </select>
                     </div>
                     <div>
                         <label style="display:block; font-size:11px; font-weight:600; color:#71717a; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px;">Email</label>
@@ -285,20 +306,20 @@ function usuariosPanel() {
     return {
         modal: {{ $errors->any() ? 'true' : 'false' }},
         editandoId: null,
-        form: { name: '', email: '', box_nombre: '' },
+        form: { name: '', email: '', role: 'empleado', box_nombre: '' },
         modalEliminar: false,
         eliminarUrl: '',
         eliminarNombre: '',
 
         abrirCrear() {
             this.editandoId = null;
-            this.form = { name: '', email: '', box_nombre: '' };
+            this.form = { name: '', email: '', role: 'empleado', box_nombre: '' };
             this.modal = true;
         },
 
-        abrirEditar(id, name, email, box_nombre) {
+        abrirEditar(id, name, email, role, box_nombre) {
             this.editandoId = id;
-            this.form = { name, email, box_nombre };
+            this.form = { name, email, role, box_nombre };
             this.modal = true;
         },
 

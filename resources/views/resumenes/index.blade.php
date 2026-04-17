@@ -565,17 +565,9 @@ function resumenes() {
                         const dot = badge.querySelector('span');
                         if (dot) dot.style.background = c.color;
                     }
-                    if (data.estado === 'sin_celular') {
-                        if (!this.sinCelularList.includes(data.cliente_nombre)) {
-                            this.sinCelularList.push(data.cliente_nombre);
-                        }
-                    }
                     if (data.procesados >= data.total && data.total > 0) {
                         this.enviando = false;
                         clearTimeout(this._envioTimeout);
-                        if (this.sinCelularList.length > 0) {
-                            this.mostrarSinCelular = true;
-                        }
                     }
                 });
         },
@@ -602,6 +594,10 @@ function resumenes() {
                     clearTimeout(this._envioTimeout);
                 } else {
                     this.progreso.total = json.total;
+                    if (json.sin_celular && json.sin_celular.length > 0) {
+                        this.sinCelularList = json.sin_celular;
+                        this.mostrarSinCelular = true;
+                    }
                 }
             } catch {
                 alert('Error de conexión.');

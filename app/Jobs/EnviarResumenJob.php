@@ -35,13 +35,6 @@ class EnviarResumenJob implements ShouldQueue
 
         $this->broadcast($resumen, Resumen::ENVIANDO);
 
-        // Sin celular
-        if (empty($cliente->celular)) {
-            $resumen->update(['estado' => Resumen::SIN_CELULAR]);
-            $this->broadcast($resumen, Resumen::SIN_CELULAR);
-            return;
-        }
-
         try {
             $this->enviarWhatsApp($cliente->celular, $resumen->pdf_path);
 
@@ -160,7 +153,7 @@ class EnviarResumenJob implements ShouldQueue
         $total = Resumen::where('periodo', $periodo)->count();
 
         $procesados = Resumen::where('periodo', $periodo)
-            ->whereIn('estado', [Resumen::NOTIFICADO, Resumen::ERROR, Resumen::SIN_CELULAR])
+            ->whereIn('estado', [Resumen::NOTIFICADO, Resumen::ERROR])
             ->count();
 
         try {
@@ -188,7 +181,7 @@ class EnviarResumenJob implements ShouldQueue
         $periodo    = $resumen->periodo;
         $total      = Resumen::where('periodo', $periodo)->count();
         $procesados = Resumen::where('periodo', $periodo)
-            ->whereIn('estado', [Resumen::NOTIFICADO, Resumen::ERROR, Resumen::SIN_CELULAR])
+            ->whereIn('estado', [Resumen::NOTIFICADO, Resumen::ERROR])
             ->count();
 
         try {
