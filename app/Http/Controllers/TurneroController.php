@@ -16,7 +16,7 @@ class TurneroController extends Controller
     {
         $usuarios = User::orderBy('role', 'desc') // admin primero
                         ->orderBy('id')
-                        ->get(['id', 'name', 'box_nombre', 'box_status', 'status_changed_at']);
+                        ->get(['id', 'name', 'role', 'box_nombre', 'box_status', 'status_changed_at']);
 
         return view('turnero.tv', compact('usuarios'));
     }

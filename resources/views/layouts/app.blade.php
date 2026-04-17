@@ -26,7 +26,8 @@
 <nav style="background:#09090b; border-bottom:1px solid #27272a; height:56px; display:flex; align-items:center; padding:0 32px; gap:32px; position:sticky; top:0; z-index:40;">
 
     <!-- Logo -->
-    <a href="/">
+    <a href="{{ route('resumenes.index') }}"
+       style="display:flex; align-items:center; flex-shrink:0;">
         <img src="{{ asset('logo.jpg') }}" alt="{{ config('app.name') }}"
              style="height:32px; width:auto; border-radius:6px; object-fit:cover;">
     </a>
@@ -74,7 +75,13 @@
 
     <!-- Usuario + salir -->
     <div style="display:flex; align-items:center; gap:16px;">
-        <span style="font-size:13px; color:#a1a1aa;">{{ auth()->user()->name }}</span>
+        <a href="{{ route('profile.edit') }}"
+           style="font-size:13px; color:#a1a1aa; transition:color 0.15s;
+                  {{ request()->routeIs('profile.*') ? 'color:#fafafa;' : '' }}"
+           onmouseover="this.style.color='#fafafa'"
+           onmouseout="this.style.color='{{ request()->routeIs('profile.*') ? '#fafafa' : '#a1a1aa' }}'">
+            {{ auth()->user()->name }}
+        </a>
         <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit"

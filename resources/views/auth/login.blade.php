@@ -97,10 +97,12 @@
 
                 {{-- Botón --}}
                 <button type="submit"
-                        class="w-full mt-2 py-3 rounded-xl text-sm font-semibold text-black
-                               bg-white hover:bg-gray-100 active:bg-gray-200
-                               transition-all duration-150 shadow-lg
-                               hover:shadow-white/10">
+                        style="width:100%; margin-top:8px; padding:12px; background:#22c55e;
+                               color:#000; font-weight:700; font-size:15px;
+                               border:none; border-radius:8px; cursor:pointer;
+                               transition:opacity 0.15s;"
+                        onmouseover="this.style.opacity='0.9'"
+                        onmouseout="this.style.opacity='1'">
                     Ingresar
                 </button>
 

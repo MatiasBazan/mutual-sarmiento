@@ -11,12 +11,17 @@
             background: #09090b;
             color: #fafafa;
             font-family: system-ui, -apple-system, sans-serif;
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
         [x-cloak] { display: none !important; }
+        * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
     </style>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -32,12 +37,19 @@
                 <span style="font-size:17px; font-weight:700; color:#fafafa; line-height:1.3;">Club Sarmiento</span>
             </div>
         </div>
-        <div style="font-family:'Courier New', monospace; font-size:32px; font-weight:700; color:#fafafa; letter-spacing:3px;"
+        <div style="font-family:'Courier New', monospace; font-size:48px; font-weight:700; color:#fafafa; letter-spacing:4px;"
              x-text="reloj"></div>
     </header>
 
-    <!-- Grid de boxes -->
-    <main style="flex:1; display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:16px; padding:16px; align-content:start;">
+    <!-- Grid 2x2 fijo -->
+    <main style="
+        height: calc(100vh - 64px);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 16px;
+        padding: 16px;
+    ">
         <template x-for="box in boxes" :key="box.id">
             <div :style="`
                 background: #18181b;
@@ -48,9 +60,10 @@
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                gap: 12px;
+                gap: 16px;
                 text-align: center;
                 padding: 32px;
+                height: 100%;
                 transition: all 0.5s;
             `">
 
@@ -68,14 +81,14 @@
                     font-size: 13px;
                     font-weight: 500;
                     color: #71717a;
-                    letter-spacing: 2px;
+                    letter-spacing: 3px;
                     text-transform: uppercase;
                     margin: 0;
-                `" x-text="box.box_nombre"></p>
+                `" x-text="boxLabel(box)"></p>
 
                 <!-- Nombre del empleado -->
                 <h2 :style="`
-                    font-size: 42px;
+                    font-size: clamp(2rem, 4vw, 3.5rem);
                     font-weight: 700;
                     color: #fafafa;
                     line-height: 1;
@@ -87,9 +100,9 @@
                     display: inline-flex;
                     align-items: center;
                     gap: 6px;
-                    padding: 6px 18px;
+                    padding: 10px 24px;
                     border-radius: 20px;
-                    font-size: 12px;
+                    font-size: 14px;
                     font-weight: 700;
                     letter-spacing: 2px;
                     text-transform: uppercase;
@@ -130,6 +143,11 @@ function turneroTv() {
                 pausa:   '#f59e0b',
                 ausente: '#52525b',
             }[status] ?? '#52525b';
+        },
+
+        boxLabel(box) {
+            if (box.role === 'admin' || !box.box_nombre) return 'GERENCIA';
+            return box.box_nombre.toUpperCase();
         },
 
         estadoLabel(status) {

@@ -25,8 +25,9 @@
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;">
         <h1 style="font-size:22px; font-weight:700; color:#fafafa; margin:0;">Clientes</h1>
         <button @click="modal = true"
-                style="background:#fafafa; color:#09090b; border:none; padding:8px 16px;
-                       border-radius:7px; font-size:13px; font-weight:600; cursor:pointer;">
+                style="background:#18181b; border:1px solid #3f3f46; color:#fafafa; padding:8px 16px;
+                       border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;
+                       display:flex; align-items:center; gap:6px; transition:all 0.15s;">
             + Nuevo cliente
         </button>
     </div>
@@ -143,16 +144,27 @@
 
     {{-- ─── MODAL NUEVO ──────────────────────────────────────────────── --}}
     <div :style="modal
-                ? 'display:flex; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.85); backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:16px;'
+                ? 'display:flex; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.75); backdrop-filter:blur(2px); align-items:center; justify-content:center; padding:16px;'
                 : 'display:none'"
          @click.self="modal = false">
 
         <div style="background:#18181b; border:1px solid #27272a; border-radius:16px;
                     padding:28px; width:100%; max-width:440px;">
 
-            <h3 style="font-size:16px; font-weight:600; color:#fafafa; margin:0 0 24px;">
-                Nuevo cliente
-            </h3>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h3 style="font-size:16px; font-weight:600; color:#fafafa; margin:0;">Nuevo cliente</h3>
+                <button type="button" @click="modal = false"
+                        style="background:transparent; border:1px solid #3f3f46; color:#71717a;
+                               width:28px; height:28px; border-radius:6px; cursor:pointer;
+                               display:flex; align-items:center; justify-content:center; flex-shrink:0;
+                               transition:all 0.15s;"
+                        onmouseover="this.style.borderColor='rgba(239,68,68,0.4)'; this.style.color='#ef4444'"
+                        onmouseout="this.style.borderColor='#3f3f46'; this.style.color='#71717a'">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
 
             <form method="POST" action="{{ route('clientes.store') }}">
                 @csrf
@@ -176,16 +188,27 @@
 
     {{-- ─── MODAL EDITAR ──────────────────────────────────────────────── --}}
     <div :style="modalEditar
-                ? 'display:flex; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.85); backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:16px;'
+                ? 'display:flex; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.75); backdrop-filter:blur(2px); align-items:center; justify-content:center; padding:16px;'
                 : 'display:none'"
          @click.self="modalEditar = false">
 
         <div style="background:#18181b; border:1px solid #27272a; border-radius:16px;
                     padding:28px; width:100%; max-width:440px;">
 
-            <h3 style="font-size:16px; font-weight:600; color:#fafafa; margin:0 0 24px;">
-                Editar cliente
-            </h3>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h3 style="font-size:16px; font-weight:600; color:#fafafa; margin:0;">Editar cliente</h3>
+                <button type="button" @click="modalEditar = false"
+                        style="background:transparent; border:1px solid #3f3f46; color:#71717a;
+                               width:28px; height:28px; border-radius:6px; cursor:pointer;
+                               display:flex; align-items:center; justify-content:center; flex-shrink:0;
+                               transition:all 0.15s;"
+                        onmouseover="this.style.borderColor='rgba(239,68,68,0.4)'; this.style.color='#ef4444'"
+                        onmouseout="this.style.borderColor='#3f3f46'; this.style.color='#71717a'">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
 
             <form method="POST" :action="`/clientes/${clienteEditar.id}`">
                 @csrf
@@ -237,12 +260,27 @@
 
     {{-- ─── MODAL ELIMINAR ────────────────────────────────────────────── --}}
     <div :style="modalEliminar
-                ? 'display:flex; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.85); backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:16px;'
+                ? 'display:flex; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.75); backdrop-filter:blur(2px); align-items:center; justify-content:center; padding:16px;'
                 : 'display:none'"
          @click.self="modalEliminar = false">
 
         <div style="background:#18181b; border:1px solid #27272a; border-radius:16px;
                     padding:32px 28px; width:100%; max-width:380px; text-align:center;">
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; text-align:left;">
+                <h3 style="font-size:16px; font-weight:600; color:#fafafa; margin:0;">¿Eliminar cliente?</h3>
+                <button type="button" @click="modalEliminar = false"
+                        style="background:transparent; border:1px solid #3f3f46; color:#71717a;
+                               width:28px; height:28px; border-radius:6px; cursor:pointer;
+                               display:flex; align-items:center; justify-content:center; flex-shrink:0;
+                               transition:all 0.15s;"
+                        onmouseover="this.style.borderColor='rgba(239,68,68,0.4)'; this.style.color='#ef4444'"
+                        onmouseout="this.style.borderColor='#3f3f46'; this.style.color='#71717a'">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
 
             <div style="width:48px; height:48px; border-radius:12px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2);
                         display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
@@ -253,10 +291,6 @@
                     <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
                 </svg>
             </div>
-
-            <h3 style="font-size:16px; font-weight:600; color:#fafafa; margin:0 0 8px;">
-                ¿Eliminar cliente?
-            </h3>
             <p style="font-size:13px; color:#71717a; margin:0 0 24px;" x-text="`Se eliminará a ${eliminarNombre}. Esta acción no se puede deshacer.`"></p>
 
             <div style="display:flex; gap:8px; justify-content:center;">
