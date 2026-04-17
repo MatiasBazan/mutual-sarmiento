@@ -114,7 +114,7 @@
                     <th style="padding:10px 20px; text-align:left; font-size:11px; font-weight:600; color:#71717a; letter-spacing:0.05em; text-transform:uppercase;">Celular</th>
                     <th style="padding:10px 20px; text-align:left; font-size:11px; font-weight:600; color:#71717a; letter-spacing:0.05em; text-transform:uppercase;">Estado</th>
                     <th style="padding:10px 20px; text-align:left; font-size:11px; font-weight:600; color:#71717a; letter-spacing:0.05em; text-transform:uppercase;">Enviado</th>
-                    <th style="padding:10px 20px; text-align:center; font-size:11px; font-weight:600; color:#71717a; letter-spacing:0.05em; text-transform:uppercase;">PDF</th>
+                    <th style="padding:10px 20px; text-align:center; font-size:11px; font-weight:600; color:#71717a; letter-spacing:0.05em; text-transform:uppercase;">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -147,6 +147,35 @@
                     </td>
                     <td style="padding:12px 20px; text-align:center;">
                         <div style="display:inline-flex; align-items:center; gap:6px;">
+
+                            {{-- Editar cliente --}}
+                            <button type="button"
+                                title="Editar cliente"
+                                @click="abrirEditarCliente({{ $r->cliente->id }}, {{ Js::from($r->cliente->nombre_completo) }}, {{ Js::from($r->cliente->nro_socio ?? '') }}, {{ Js::from($r->cliente->celular ?? '') }}, {{ Js::from($r->cliente->direccion ?? '') }})"
+                                style="background:transparent; border:1px solid #3f3f46; color:#71717a; padding:6px; border-radius:6px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:all 0.15s;"
+                                onmouseover="this.style.borderColor='#71717a'; this.style.color='#fafafa'"
+                                onmouseout="this.style.borderColor='#3f3f46'; this.style.color='#71717a'">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                </svg>
+                            </button>
+
+                            {{-- Enviar este resumen --}}
+                            @if($r->estado !== 'notificado' && $r->cliente->celular)
+                            <button type="button"
+                                title="Enviar este resumen"
+                                @click="enviarUno({{ $r->id }}, $event.currentTarget)"
+                                style="background:transparent; border:1px solid #3f3f46; color:#71717a; padding:6px; border-radius:6px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:all 0.15s;"
+                                onmouseover="this.style.borderColor='rgba(34,197,94,0.4)'; this.style.color='#22c55e'; this.style.background='rgba(34,197,94,0.08)'"
+                                onmouseout="this.style.borderColor='#3f3f46'; this.style.color='#71717a'; this.style.background='transparent'">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                    <line x1="22" y1="2" x2="11" y2="13"/>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                                </svg>
+                            </button>
+                            @endif
+
                             @if($r->pdf_path)
                             <a href="{{ route('resumenes.pdf', $r) }}"
                                target="_blank"
@@ -162,6 +191,7 @@
                                 </svg>
                             </a>
                             @endif
+
                             <button
                                 onclick="confirmarEliminarResumen({{ $r->id }})"
                                 title="Eliminar resumen"
@@ -191,6 +221,87 @@
         </table>
         <div style="padding:12px 20px; border-top:1px solid #27272a;">
             {{ $resumenes->links() }}
+        </div>
+    </div>
+
+    <!-- Modal editar cliente -->
+    <div :style="modalEditarCliente
+                    ? 'display:flex; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.75); backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); align-items:center; justify-content:center; padding:16px;'
+                    : 'display:none'"
+         @click.self="modalEditarCliente = false">
+
+        <div style="background:#18181b; border:1px solid #27272a; border-radius:16px; padding:32px; width:100%; max-width:440px; position:relative; z-index:10000;">
+
+            <!-- Header -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+                <h3 style="font-size:18px; font-weight:700; color:#fafafa; margin:0;">Editar cliente</h3>
+                <button type="button" @click="modalEditarCliente = false"
+                        style="background:transparent; border:1px solid #3f3f46; color:#71717a;
+                               width:28px; height:28px; border-radius:6px; cursor:pointer;
+                               display:flex; align-items:center; justify-content:center; flex-shrink:0;
+                               transition:all 0.15s;"
+                        onmouseover="this.style.borderColor='rgba(239,68,68,0.4)'; this.style.color='#ef4444'"
+                        onmouseout="this.style.borderColor='#3f3f46'; this.style.color='#71717a'">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+
+            <form :action="`/clientes/${clienteEditar.id}`" method="POST">
+                @csrf
+                @method('PUT')
+
+                <div style="display:flex; flex-direction:column; gap:14px;">
+
+                    <div>
+                        <label style="display:block; font-size:11px; font-weight:600; color:#71717a; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px;">Nombre completo</label>
+                        <input type="text" name="nombre_completo" :value="clienteEditar.nombre_completo" required
+                               style="width:100%; background:#27272a; border:1px solid #3f3f46; border-radius:7px; padding:8px 12px; font-size:13px; color:#fafafa; outline:none;"
+                               onfocus="this.style.borderColor='#71717a'" onblur="this.style.borderColor='#3f3f46'">
+                    </div>
+
+                    <div>
+                        <label style="display:block; font-size:11px; font-weight:600; color:#71717a; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px;">N° Socio</label>
+                        <input type="text" name="nro_socio" :value="clienteEditar.nro_socio"
+                               style="width:100%; background:#27272a; border:1px solid #3f3f46; border-radius:7px; padding:8px 12px; font-size:13px; color:#fafafa; outline:none;"
+                               onfocus="this.style.borderColor='#71717a'" onblur="this.style.borderColor='#3f3f46'">
+                    </div>
+
+                    <div>
+                        <label style="display:block; font-size:11px; font-weight:600; color:#71717a; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px;">
+                            Celular <span style="color:#71717a; font-weight:400; text-transform:none;">(con código de país, ej: 5493512345678)</span>
+                        </label>
+                        <input type="text" name="celular" :value="clienteEditar.celular"
+                               placeholder="5493512345678"
+                               style="width:100%; background:#27272a; border:1px solid #3f3f46; border-radius:7px; padding:8px 12px; font-size:13px; color:#fafafa; outline:none;"
+                               onfocus="this.style.borderColor='#71717a'" onblur="this.style.borderColor='#3f3f46'">
+                    </div>
+
+                    <div>
+                        <label style="display:block; font-size:11px; font-weight:600; color:#71717a; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px;">Dirección</label>
+                        <input type="text" name="direccion" :value="clienteEditar.direccion"
+                               style="width:100%; background:#27272a; border:1px solid #3f3f46; border-radius:7px; padding:8px 12px; font-size:13px; color:#fafafa; outline:none;"
+                               onfocus="this.style.borderColor='#71717a'" onblur="this.style.borderColor='#3f3f46'">
+                    </div>
+
+                </div>
+
+                <div style="display:flex; gap:10px; margin-top:24px;">
+                    <button type="button" @click="modalEditarCliente = false"
+                            style="flex:1; padding:10px; border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; background:transparent; color:#a1a1aa; border:1px solid #3f3f46; transition:border-color 0.15s, color 0.15s;"
+                            onmouseover="this.style.borderColor='#71717a'; this.style.color='#fafafa'"
+                            onmouseout="this.style.borderColor='#3f3f46'; this.style.color='#a1a1aa'">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                            style="flex:1; padding:10px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; background:#22c55e; color:#000; border:none; transition:background 0.15s;"
+                            onmouseover="this.style.background='#16a34a'"
+                            onmouseout="this.style.background='#22c55e'">
+                        Guardar
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -357,6 +468,38 @@ function resumenes() {
         modalConfirm: false,
         enviando: false,
         progreso: { total: 0, procesados: 0, porcentaje: 0, clienteNombre: '', estado: '' },
+
+        modalEditarCliente: false,
+        clienteEditar: {},
+        abrirEditarCliente(id, nombre_completo, nro_socio, celular, direccion) {
+            this.clienteEditar = { id, nombre_completo, nro_socio, celular, direccion };
+            this.modalEditarCliente = true;
+        },
+
+        async enviarUno(id, btn) {
+            btn.disabled = true;
+            btn.style.opacity = '0.5';
+            try {
+                const res = await fetch(`/resumenes/${id}/enviar`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const json = await res.json();
+                if (!res.ok) {
+                    alert(json.message ?? 'Error al enviar.');
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                }
+                // Si ok: el badge se actualizará vía Echo cuando el job procese
+            } catch {
+                alert('Error de conexión.');
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            }
+        },
 
         _badgeColors: {
             pendiente:   { bg: 'rgba(245,158,11,0.1)',  color: '#f59e0b', border: 'rgba(245,158,11,0.2)' },

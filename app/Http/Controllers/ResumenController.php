@@ -176,6 +176,22 @@ class ResumenController extends Controller
         ]);
     }
 
+    public function enviarUno(Resumen $resumen)
+    {
+        if ($resumen->estado === Resumen::NOTIFICADO) {
+            return response()->json(['message' => 'Este resumen ya fue enviado.'], 422);
+        }
+
+        if (!$resumen->cliente->celular) {
+            return response()->json(['message' => 'El cliente no tiene celular registrado.'], 422);
+        }
+
+        $resumen->update(['estado' => Resumen::PENDIENTE, 'intentos' => 0]);
+        EnviarResumenJob::dispatch($resumen->id);
+
+        return response()->json(['ok' => true, 'message' => 'Resumen encolado para envío.']);
+    }
+
     public function destroy(Resumen $resumen)
     {
         if ($resumen->pdf_path && Storage::exists($resumen->pdf_path)) {

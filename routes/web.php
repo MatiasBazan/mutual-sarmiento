@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Route;
 // Redirigir raíz según rol
 Route::get('/', function () {
     if (auth()->check()) {
+        if (auth()->user()->isTurnero()) {
+            return redirect()->route('turnero.panel');
+        }
         return redirect()->route('resumenes.index');
     }
     return redirect()->route('login');
@@ -31,19 +34,22 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/turnero', [TurneroController::class, 'panel'])->name('turnero.panel');
     Route::patch('/turnero/status', [TurneroController::class, 'updateStatus'])->name('turnero.status');
 
-    // Resúmenes — admin y empleados
-    Route::get('/resumenes', [ResumenController::class, 'index'])->name('resumenes.index');
-    Route::get('/resumenes/importar', fn() => view('resumenes.importar'))->name('resumenes.importar');
-    Route::post('/resumenes/importar', [ResumenController::class, 'importar'])->middleware('throttle:10,1')->name('resumenes.importar.store');
-    Route::post('/resumenes/enviar-todos', [ResumenController::class, 'enviarTodos'])->middleware('throttle:5,1')->name('resumenes.enviar-todos');
-    Route::get('/resumenes/{resumen}/pdf', [ResumenController::class, 'verPdf'])->name('resumenes.pdf');
-    Route::delete('/resumenes/{resumen}', [ResumenController::class, 'destroy'])->name('resumenes.destroy');
+    // Resúmenes — admin y empleados (no turnero)
+    Route::middleware(['no-turnero'])->group(function () {
+        Route::get('/resumenes', [ResumenController::class, 'index'])->name('resumenes.index');
+        Route::get('/resumenes/importar', fn() => view('resumenes.importar'))->name('resumenes.importar');
+        Route::post('/resumenes/importar', [ResumenController::class, 'importar'])->middleware('throttle:10,1')->name('resumenes.importar.store');
+        Route::post('/resumenes/enviar-todos', [ResumenController::class, 'enviarTodos'])->middleware('throttle:5,1')->name('resumenes.enviar-todos');
+        Route::post('/resumenes/{resumen}/enviar', [ResumenController::class, 'enviarUno'])->middleware('throttle:30,1')->name('resumenes.enviar-uno');
+        Route::get('/resumenes/{resumen}/pdf', [ResumenController::class, 'verPdf'])->name('resumenes.pdf');
+        Route::delete('/resumenes/{resumen}', [ResumenController::class, 'destroy'])->name('resumenes.destroy');
 
-    // Clientes — admin y empleados
-    Route::get('/clientes', [ClienteController::class, 'index'])->name('clientes.index');
-    Route::post('/clientes', [ClienteController::class, 'store'])->name('clientes.store');
-    Route::put('/clientes/{cliente}', [ClienteController::class, 'update'])->name('clientes.update');
-    Route::delete('/clientes/{cliente}', [ClienteController::class, 'destroy'])->name('clientes.destroy');
+        // Clientes — admin y empleados (no turnero)
+        Route::get('/clientes', [ClienteController::class, 'index'])->name('clientes.index');
+        Route::post('/clientes', [ClienteController::class, 'store'])->name('clientes.store');
+        Route::put('/clientes/{cliente}', [ClienteController::class, 'update'])->name('clientes.update');
+        Route::delete('/clientes/{cliente}', [ClienteController::class, 'destroy'])->name('clientes.destroy');
+    });
 
     // Usuarios — solo admin
     Route::middleware(['admin'])->group(function () {

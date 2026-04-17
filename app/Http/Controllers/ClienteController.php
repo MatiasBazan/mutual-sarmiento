@@ -39,7 +39,7 @@ class ClienteController extends Controller
 
         $cliente->update($data);
 
-        return redirect()->route('clientes.index')->with('success', 'Cliente actualizado.');
+        return redirect()->back()->with('success', 'Cliente actualizado.');
     }
 
     public function destroy(Cliente $cliente)
