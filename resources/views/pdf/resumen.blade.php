@@ -1,624 +1,827 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<title>Resumen {{ $nro_socio ?? '' }}</title>
-<style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Resumen {{ $nro_socio ?? '' }}</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
 
-    body {
-        font-family: 'DejaVu Sans', sans-serif;
-        font-size: 10px;
-        color: #222;
-        background: #fff;
-        padding: 22px 26px;
-    }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    /* ══════════════════════════════════════════
-       HEADER
-    ══════════════════════════════════════════ */
-    .header-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 0;
-    }
-    .header-logo-cell {
-        width: 38%;
-        vertical-align: middle;
-        padding-right: 12px;
-    }
-    .header-info-cell {
-        width: 62%;
-        text-align: right;
-        vertical-align: middle;
-    }
-    .header-title {
-        font-size: 28px;
-        font-weight: bold;
-        color: #1a1a2e;
-        letter-spacing: 4px;
-        line-height: 1;
-    }
-    .header-sub {
-        font-size: 8.5px;
-        color: #666;
-        margin-top: 5px;
-        line-height: 1.8;
-        letter-spacing: 0.3px;
-    }
-    .header-sub strong {
-        color: #1a1a2e;
-        font-weight: bold;
-    }
-    .header-divider {
-        border: none;
-        border-top: 3px solid #1a1a2e;
-        margin-top: 12px;
-        margin-bottom: 14px;
-    }
+        :root {
+            --bordo:       #6b1a2a;
+            --bordo-deep:  #4a1020;
+            --bordo-light: #8c2438;
+            --bordo-mist:  #f7f0f2;
+            --bordo-tint:  #fdf5f6;
+            --gold:        #c9a96e;
+            --gold-light:  #e8d5b0;
+            --ink:         #1a1214;
+            --ink-mid:     #4a3840;
+            --ink-soft:    #8a7880;
+            --ink-ghost:   #c8bcc0;
+            --white:       #ffffff;
+            --cream:       #fdfbf9;
+            --rule:        #e8e0e3;
+        }
 
-    /* ══════════════════════════════════════════
-       SECCIÓN CLIENTE
-    ══════════════════════════════════════════ */
-    .cliente-box {
-        background: #f9f9f7;
-        border-left: 5px solid #1a1a2e;
-        padding: 10px 14px;
-        margin-bottom: 14px;
-    }
-    .cliente-table { width: 100%; border-collapse: collapse; }
-    .cliente-info-cell { vertical-align: top; }
-    .cliente-nombre {
-        font-size: 14px;
-        font-weight: bold;
-        color: #1a1a2e;
-        letter-spacing: 0.5px;
-        margin-bottom: 4px;
-    }
-    .cliente-dato {
-        font-size: 8.5px;
-        color: #777;
-        line-height: 1.7;
-    }
-    .cliente-badge-cell {
-        width: 130px;
-        text-align: right;
-        vertical-align: middle;
-    }
-    .badge-label {
-        font-size: 7px;
-        color: #aaa;
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-        margin-bottom: 3px;
-    }
-    .badge-socio {
-        display: inline-block;
-        background: #1a1a2e;
-        color: #fff;
-        font-size: 8px;
-        font-weight: bold;
-        padding: 5px 10px;
-        letter-spacing: 0.8px;
-    }
+        body {
+            font-family: 'DM Sans', 'DejaVu Sans', sans-serif;
+            font-size: 10px;
+            color: var(--ink);
+            background: var(--cream);
+            padding: 28px 30px 24px;
+            line-height: 1.4;
+        }
 
-    /* ══════════════════════════════════════════
-       CARDS DE TOTALES
-    ══════════════════════════════════════════ */
-    .cards-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 4px;
-    }
-    .card-cell { width: 33.33%; padding: 0 5px; vertical-align: top; }
-    .card-cell:first-child { padding-left: 0; }
-    .card-cell:last-child  { padding-right: 0; }
+        /* ══════════════════════ HEADER ══════════════════════ */
+        .header-wrap {
+            display: table;
+            width: 100%;
+            margin-bottom: 0;
+        }
+        .header-left {
+            display: table-cell;
+            width: 48%;
+            vertical-align: middle;
+            padding-right: 20px;
+        }
+        .header-right {
+            display: table-cell;
+            width: 52%;
+            vertical-align: bottom;
+            text-align: right;
+        }
 
-    .card {
-        border: 1px solid #e0e0e0;
-        padding: 11px 14px;
-        background: #fff;
-    }
-    .card-highlight {
-        background: #1a1a2e;
-        padding: 11px 14px;
-    }
-    .card-label {
-        font-size: 7.5px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: #aaa;
-        margin-bottom: 6px;
-        font-weight: bold;
-    }
-    .card-highlight .card-label { color: #8899bb; }
-    .card-value {
-        font-family: 'DejaVu Sans Mono', monospace;
-        font-size: 14px;
-        font-weight: bold;
-        color: #1a1a2e;
-    }
-    .card-highlight .card-value { color: #fff; font-size: 15px; }
+        .logo-row {
+            display: table;
+            width: 100%;
+        }
+        .logo-img-cell {
+            display: table-cell;
+            vertical-align: middle;
+            width: 70px;
+            padding-right: 14px;
+        }
+        .logo-img-cell img {
+            height: 52px;
+            width: auto;
+        }
+        .logo-text-cell {
+            display: table-cell;
+            vertical-align: middle;
+        }
+        .logo-text-cell .org-name {
+            font-size: 9.5px;
+            font-weight: 600;
+            color: var(--bordo);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            line-height: 1.5;
+        }
+        .logo-text-cell .org-contact {
+            font-size: 7px;
+            color: var(--ink-soft);
+            line-height: 1.8;
+            margin-top: 4px;
+        }
 
-    /* fila secundaria debajo de las cards */
-    .cards-meta-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 14px;
-        margin-top: 6px;
-    }
-    .cards-meta-cell { font-size: 8px; color: #bbb; padding: 0 0 0 2px; }
-    .cards-meta-sep { font-size: 8px; color: #ddd; padding: 0 10px; }
+        .resumen-word {
+            font-family: 'Playfair Display', 'DejaVu Sans', serif;
+            font-size: 42px;
+            font-weight: 900;
+            color: var(--bordo);
+            letter-spacing: 6px;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+        .resumen-meta {
+            font-size: 8px;
+            color: var(--ink-soft);
+            letter-spacing: 0.5px;
+            margin-top: 6px;
+            line-height: 1.9;
+        }
+        .resumen-meta strong {
+            color: var(--bordo);
+            font-weight: 600;
+        }
+        .resumen-cuit {
+            font-size: 7px;
+            color: var(--ink-ghost);
+            margin-top: 3px;
+            letter-spacing: 0.3px;
+        }
 
-    /* ══════════════════════════════════════════
-       TABLA DE MOVIMIENTOS
-    ══════════════════════════════════════════ */
-    .section-title {
-        font-size: 7.5px;
-        font-weight: bold;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        color: #aaa;
-        margin-bottom: 6px;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 4px;
-    }
-    .mov-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 14px;
-        font-size: 9px;
-    }
-    .mov-table thead tr { background: #1a1a2e; }
-    .mov-table thead th {
-        padding: 7px 9px;
-        text-align: left;
-        font-size: 7.5px;
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-        color: #a0b0cc;
-        font-weight: bold;
-    }
-    .mov-table thead th.col-right { text-align: right; }
-    .mov-table tbody tr.row-odd  { background: #fff; }
-    .mov-table tbody tr.row-even { background: #fafafa; }
-    .mov-table tbody td {
-        padding: 5px 9px;
-        vertical-align: middle;
-        border-bottom: 1px solid #f0f0f0;
-        color: #333;
-    }
-    .mov-table tbody td.col-right {
-        text-align: right;
-        font-family: 'DejaVu Sans Mono', monospace;
-        font-size: 8.5px;
-    }
-    .importe-pago  { color: #15803d; font-weight: bold; }
-    .importe-cargo { color: #1a1a2e; }
+        /* Línea divisoria decorativa */
+        .divider-fancy {
+            margin: 14px 0 16px;
+            height: 2px;
+            background: linear-gradient(to right, var(--bordo) 60%, var(--gold) 100%);
+            border: none;
+            position: relative;
+        }
+        .divider-fancy::after {
+            content: '◆';
+            position: absolute;
+            right: 0;
+            top: -6px;
+            color: var(--gold);
+            font-size: 14px;
+        }
 
-    .mov-tfoot-row { background: #f8f8f6; }
-    .mov-tfoot-row td {
-        padding: 6px 9px;
-        font-weight: bold;
-        font-size: 9px;
-        border-top: 2px solid #1a1a2e;
-        color: #1a1a2e;
-    }
+        /* ══════════════════════ CLIENTE ══════════════════════ */
+        .cliente-wrap {
+            display: table;
+            width: 100%;
+            margin-bottom: 16px;
+            background: var(--white);
+            border: 1px solid var(--rule);
+            border-top: 3px solid var(--bordo);
+            padding: 12px 16px;
+        }
+        .cliente-left {
+            display: table-cell;
+            vertical-align: middle;
+        }
+        .cliente-right {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: right;
+            width: 140px;
+        }
+        .cliente-nombre {
+            font-family: 'Playfair Display', 'DejaVu Sans', serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--bordo-deep);
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .cliente-dato {
+            font-size: 8px;
+            color: var(--ink-soft);
+            letter-spacing: 0.3px;
+            line-height: 1.7;
+        }
+        .badge-label {
+            font-size: 6.5px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--ink-ghost);
+            margin-bottom: 4px;
+        }
+        .badge-nro {
+            background: var(--bordo);
+            color: var(--white);
+            font-family: 'DM Mono', 'DejaVu Sans Mono', monospace;
+            font-size: 8.5px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            padding: 5px 10px;
+            display: inline-block;
+        }
 
-    /* ══════════════════════════════════════════
-       RESUMEN DEL PERÍODO (4 columnas)
-    ══════════════════════════════════════════ */
-    .rf-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
-    .rf-cell { width: 25%; padding: 0 4px; vertical-align: top; }
-    .rf-cell:first-child { padding-left: 0; }
-    .rf-cell:last-child  { padding-right: 0; }
-    .rf-box {
-        border: 1px solid #e0e0e0;
-        padding: 8px 11px;
-        background: #fafafa;
-    }
-    .rf-label {
-        font-size: 7px;
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-        color: #aaa;
-        font-weight: bold;
-        margin-bottom: 4px;
-    }
-    .rf-value {
-        font-family: 'DejaVu Sans Mono', monospace;
-        font-size: 11px;
-        font-weight: bold;
-        color: #1a1a2e;
-    }
+        /* ══════════════════════ CARDS TOTALES ══════════════════════ */
+        .cards-grid {
+            display: table;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 10px;
+        }
+        .card-col {
+            display: table-cell;
+            vertical-align: top;
+            padding-right: 8px;
+            width: 25%;
+        }
+        .card-col:last-child { padding-right: 0; }
 
-    /* ══════════════════════════════════════════
-       AVISO ACEPTADO
-    ══════════════════════════════════════════ */
-    .aviso-box {
-        background: #f0fdf4;
-        border: 1px solid #86efac;
-        border-left: 4px solid #16a34a;
-        padding: 7px 12px;
-        margin-bottom: 12px;
-        font-size: 8px;
-        color: #15803d;
-        line-height: 1.6;
-    }
-    .aviso-check { font-weight: bold; font-size: 10px; margin-right: 5px; }
+        .card-base {
+            border: 1px solid var(--rule);
+            background: var(--white);
+            padding: 10px 13px 11px;
+            position: relative;
+        }
+        .card-base::before {
+            content: '';
+            display: block;
+            height: 2px;
+            background: var(--bordo);
+            position: absolute;
+            top: 0; left: 0; right: 0;
+        }
+        .card-hero {
+            background: var(--bordo);
+            padding: 10px 13px 11px;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-hero::after {
+            content: '◈';
+            position: absolute;
+            right: 10px;
+            bottom: 4px;
+            font-size: 28px;
+            color: rgba(255,255,255,0.06);
+        }
 
-    /* ══════════════════════════════════════════
-       CUPÓN DE PAGO
-    ══════════════════════════════════════════ */
-    .cupon-divider {
-        border: none;
-        border-top: 2px dashed #999;
-        margin: 14px 0 12px 0;
-    }
-    .cupon-title {
-        font-size: 8px;
-        font-weight: bold;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        color: #888;
-        margin-bottom: 8px;
-        text-align: center;
-    }
-    .cupon-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 8px;
-        font-size: 9px;
-    }
-    .cupon-table th {
-        background: #f0f0f0;
-        border: 1px solid #bbb;
-        padding: 4px 8px;
-        font-size: 7px;
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-        font-weight: bold;
-        color: #555;
-        text-align: left;
-    }
-    .cupon-table td {
-        border: 1px solid #bbb;
-        padding: 7px 9px;
-        vertical-align: middle;
-    }
-    .cupon-td-dark {
-        background: #1a1a2e;
-    }
-    .cupon-td-mid {
-        background: #374151;
-    }
-    .cupon-td-blank {
-        background: #fff;
-    }
-    .cupon-val-white {
-        font-family: 'DejaVu Sans Mono', monospace;
-        font-weight: bold;
-        font-size: 12px;
-        color: #fff;
-    }
-    .cupon-val-label-white {
-        font-size: 7px;
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-        color: #8899bb;
-        display: block;
-        margin-bottom: 2px;
-    }
-    .cupon-val-dark {
-        font-family: 'DejaVu Sans Mono', monospace;
-        font-weight: bold;
-        font-size: 11px;
-        color: #1a1a2e;
-    }
-    .cupon-firma {
-        font-size: 8px;
-        color: #555;
-        margin-top: 8px;
-        line-height: 2.2;
-    }
-    .cupon-firma-line {
-        border-bottom: 1px solid #555;
-        display: inline-block;
-        width: 180px;
-    }
+        .card-lbl {
+            font-size: 6.5px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            color: var(--ink-ghost);
+            margin-bottom: 7px;
+        }
+        .card-hero .card-lbl { color: rgba(201,169,110,0.8); }
 
-    /* ══════════════════════════════════════════
-       PIE LEGAL
-    ══════════════════════════════════════════ */
-    .pie-divider {
-        border: none;
-        border-top: 1px solid #ddd;
-        margin-bottom: 7px;
-        margin-top: 4px;
-    }
-    .pie-texto {
-        font-size: 7px;
-        color: #bbb;
-        line-height: 1.7;
-        text-align: center;
-    }
-    .pie-footer-table { width: 100%; border-collapse: collapse; margin-top: 5px; }
-    .pie-footer-left  { text-align: left;  font-size: 7px; color: #bbb; }
-    .pie-footer-right { text-align: right; font-size: 7px; color: #bbb; }
-</style>
+        .card-val {
+            font-family: 'DM Mono', 'DejaVu Sans Mono', monospace;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--bordo);
+            letter-spacing: -0.3px;
+        }
+        .card-hero .card-val {
+            color: var(--white);
+            font-size: 16px;
+        }
+
+        /* Barra secundaria Límite / Consumo */
+        .sub-bar {
+            display: table;
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 18px;
+        }
+        .sub-cell {
+            display: table-cell;
+            width: 50%;
+            background: var(--bordo-tint);
+            border: 1px solid var(--rule);
+            padding: 8px 13px;
+            vertical-align: middle;
+        }
+        .sub-cell:first-child { border-right: none; }
+        .sub-lbl {
+            font-size: 6.5px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--ink-soft);
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        .sub-val {
+            font-family: 'DM Mono', 'DejaVu Sans Mono', monospace;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--ink-mid);
+        }
+
+        /* ══════════════════════ SECCIÓN TITLE ══════════════════════ */
+        .section-head {
+            display: table;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+        .section-title-text {
+            font-size: 6.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: var(--bordo);
+            display: table-cell;
+            vertical-align: middle;
+            padding-right: 12px;
+            white-space: nowrap;
+        }
+        .section-title-line {
+            display: table-cell;
+            vertical-align: middle;
+            width: 100%;
+            border-bottom: 1px solid var(--rule);
+        }
+
+        /* ══════════════════════ TABLA MOVIMIENTOS ══════════════════════ */
+        .mov-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 18px;
+            font-size: 8.5px;
+        }
+        .mov-table thead tr {
+            background: var(--bordo-deep);
+        }
+        .mov-table thead th {
+            padding: 8px 10px;
+            text-align: left;
+            font-size: 6.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(201,169,110,0.9);
+            border: none;
+        }
+        .mov-table thead th.r { text-align: right; }
+
+        .mov-table tbody tr { border-bottom: 1px solid var(--rule); }
+        .mov-table tbody tr:nth-child(odd)  { background: var(--white); }
+        .mov-table tbody tr:nth-child(even) { background: var(--bordo-tint); }
+        .mov-table tbody tr:last-child { border-bottom: none; }
+
+        .mov-table tbody td {
+            padding: 6px 10px;
+            vertical-align: middle;
+            color: var(--ink);
+            font-size: 8.5px;
+        }
+        .mov-table tbody td.mono {
+            font-family: 'DM Mono', 'DejaVu Sans Mono', monospace;
+            font-size: 8px;
+        }
+        .mov-table tbody td.r { text-align: right; }
+
+        .importe-pago  { color: #15803d; font-weight: 600; }
+        .importe-cargo { color: var(--bordo); }
+
+        .mov-tfoot td {
+            padding: 7px 10px;
+            background: var(--bordo-mist);
+            border-top: 2px solid var(--bordo);
+            font-weight: 700;
+            font-size: 9px;
+            color: var(--bordo-deep);
+            font-family: 'DM Mono', 'DejaVu Sans Mono', monospace;
+        }
+        .mov-tfoot td.r { text-align: right; }
+
+        /* ══════════════════════ RESUMEN PERÍODO ══════════════════════ */
+        .rf-grid {
+            display: table;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 14px;
+        }
+        .rf-col {
+            display: table-cell;
+            width: 25%;
+            padding-right: 7px;
+            vertical-align: top;
+        }
+        .rf-col:last-child { padding-right: 0; }
+        .rf-box {
+            border: 1px solid var(--rule);
+            background: var(--white);
+            padding: 9px 12px;
+            border-left: 3px solid var(--gold);
+        }
+        .rf-lbl {
+            font-size: 6.5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--ink-soft);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .rf-val {
+            font-family: 'DM Mono', 'DejaVu Sans Mono', monospace;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--bordo);
+        }
+
+        /* ══════════════════════ AVISO ══════════════════════ */
+        .aviso-box {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-left: 3px solid #16a34a;
+            padding: 8px 13px;
+            margin-bottom: 16px;
+            font-size: 7.5px;
+            color: #166534;
+            line-height: 1.7;
+        }
+
+        /* ══════════════════════ CUPÓN ══════════════════════ */
+        .cupon-divider {
+            border: none;
+            border-top: 1.5px dashed var(--ink-ghost);
+            margin: 16px 0 12px;
+        }
+        .cupon-title {
+            font-size: 7px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--ink-soft);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .cupon-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 8.5px;
+            margin-bottom: 10px;
+        }
+        .cupon-table th {
+            background: var(--bordo-mist);
+            border: 1px solid var(--rule);
+            padding: 5px 9px;
+            font-size: 6.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--ink-mid);
+            text-align: left;
+        }
+        .cupon-table td {
+            border: 1px solid var(--rule);
+            padding: 8px 10px;
+            vertical-align: middle;
+        }
+        .cupon-dark {
+            background: var(--bordo-deep);
+        }
+        .cupon-mid {
+            background: var(--ink-mid);
+        }
+        .cupon-blank {
+            background: var(--white);
+            height: 30px;
+        }
+        .cupon-lbl-white {
+            font-size: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(201,169,110,0.75);
+            display: block;
+            margin-bottom: 3px;
+        }
+        .cupon-val-white {
+            font-family: 'DM Mono', 'DejaVu Sans Mono', monospace;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--white);
+        }
+        .cupon-val-dark {
+            font-family: 'DM Mono', 'DejaVu Sans Mono', monospace;
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--bordo);
+        }
+        .cupon-firma {
+            font-size: 8px;
+            color: var(--ink-mid);
+            line-height: 2.5;
+            letter-spacing: 0.3px;
+        }
+        .firma-line {
+            display: inline-block;
+            width: 180px;
+            border-bottom: 1px solid var(--ink-mid);
+        }
+
+        /* ══════════════════════ HORARIOS / PIE ══════════════════════ */
+        .horarios-box {
+            width: 100%;
+            text-align: center;
+            border: 1px solid var(--rule);
+            border-left: 4px solid var(--gold);
+            background: var(--bordo-tint);
+            padding: 9px 14px;
+            margin: 14px 0 10px;
+        }
+        .horarios-box p {
+            font-size: 9.5px;
+            font-weight: 700;
+            color: var(--bordo);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .pie-divider {
+            border: none;
+            border-top: 1px solid var(--rule);
+            margin-bottom: 8px;
+        }
+        .pie-legal {
+            font-size: 6.5px;
+            color: var(--ink-ghost);
+            text-align: center;
+            line-height: 1.8;
+        }
+        .pie-footer {
+            display: table;
+            width: 100%;
+            margin-top: 6px;
+        }
+        .pie-left {
+            display: table-cell;
+            text-align: left;
+            font-size: 6.5px;
+            color: var(--ink-ghost);
+        }
+        .pie-right {
+            display: table-cell;
+            text-align: right;
+            font-size: 6.5px;
+            color: var(--ink-ghost);
+        }
+    </style>
 </head>
 <body>
 
-{{-- ══════════════════════════════════════════════════════ --}}
-{{-- 1. HEADER                                              --}}
-{{-- ══════════════════════════════════════════════════════ --}}
-<table class="header-table">
+{{-- ══════════════════════════════════ 1. HEADER ══════════════════════════════════ --}}
+<table style="width:100%; border-collapse:collapse; margin-bottom:0;">
     <tr>
-        <td class="header-logo-cell">
-            @if(!empty($logoBase64))
-                <div style="background:#1a1a2e; padding:8px 12px; border-radius:6px; display:inline-block;">
-                    <img src="{{ $logoBase64 }}"
-                         style="height:48px; width:auto; filter:brightness(0) invert(1);">
-                </div>
-            @else
-                <div style="font-weight:700; font-size:13px; color:#1a1a2e; line-height:1.5; letter-spacing:0.5px;">
-                    MUTUAL DE AMIGOS<br>CLUB SARMIENTO
-                </div>
-            @endif
+        <td style="width:50%; vertical-align:middle; padding-right:20px;">
+            <table style="border-collapse:collapse; width:100%;">
+                <tr>
+                    <td style="vertical-align:middle; width:70px; padding-right:14px;">
+                        @if(!empty($logoBase64))
+                            <img src="{{ $logoBase64 }}" style="height:52px; width:auto;">
+                        @else
+                            <img src="/public/2.jpg" style="height:52px; width:auto;">
+                        @endif
+                    </td>
+                    <td style="vertical-align:middle;">
+                        <div style="font-size:9.5px; font-weight:600; color:#6b1a2a; letter-spacing:2px; text-transform:uppercase; line-height:1.5;">
+                            MUTUAL DE AMIGOS<br>CLUB SARMIENTO
+                        </div>
+                        <div style="font-size:7px; color:#8a7880; line-height:1.8; margin-top:4px;">
+                            Bv. Belgrano 1080 · Tel: 03472-480072 · Cel: 3472-547160<br>
+                            LEONES — CÓRDOBA · IVA EXENTO<br>
+                            mutualamigossarmiento@gmail.com<br>
+                            Matrícula Cba. Nº 731 · Galería Sarmiento - Local 10<br>
+                            CUIT: 30-52715206-9 · Ing. Brutos: Exento
+                        </div>
+                    </td>
+                </tr>
+            </table>
         </td>
-        <td class="header-info-cell">
-            <div class="header-title">RESUMEN</div>
-            <div class="header-sub">
-                <strong>N°</strong> {{ $nro_socio ?? '—' }}
+        <td style="width:50%; vertical-align:bottom; text-align:right;">
+            <div style="font-family:'Playfair Display','DejaVu Sans',serif; font-size:42px; font-weight:900; color:#6b1a2a; letter-spacing:6px; line-height:1; text-transform:uppercase;">RESUMEN</div>
+            <div style="font-size:8px; color:#8a7880; letter-spacing:0.5px; margin-top:6px; line-height:1.9;">
+                <strong style="color:#6b1a2a; font-weight:600;">N°</strong> {{ $nro_socio ?? '—' }}
                 &nbsp;&nbsp;|&nbsp;&nbsp;
-                <strong>Período:</strong> {{ $fecha_periodo ?? '—' }}
+                <strong style="color:#6b1a2a; font-weight:600;">Período:</strong> {{ $fecha_periodo ?? '—' }}
                 &nbsp;&nbsp;|&nbsp;&nbsp;
-                <strong>Vencimiento:</strong> {{ $fecha_vencimiento ?? '—' }}
+                <strong style="color:#6b1a2a; font-weight:600;">Vencimiento:</strong> {{ $fecha_vencimiento ?? '—' }}
+            </div>
+            <div style="font-size:7px; color:#c8bcc0; margin-top:3px;">
+                CUIT: 30-52715206-9 · Ing. Brutos: Exento · ANSeS: 52715206
             </div>
         </td>
     </tr>
 </table>
-<hr class="header-divider">
 
-{{-- ══════════════════════════════════════════════════════ --}}
-{{-- 2. SECCIÓN CLIENTE                                     --}}
-{{-- ══════════════════════════════════════════════════════ --}}
-<div class="cliente-box">
-    <table class="cliente-table">
+{{-- Divisor decorativo --}}
+<table style="width:100%; border-collapse:collapse; margin:14px 0 16px;">
+    <tr>
+        <td style="height:2px; background:linear-gradient(to right, #6b1a2a 70%, #c9a96e 100%); padding:0;"></td>
+        <td style="width:14px; text-align:right; vertical-align:middle; padding:0; font-size:14px; color:#c9a96e; padding-left:3px;">◆</td>
+    </tr>
+</table>
+
+{{-- ══════════════════════════════════ 2. CLIENTE ══════════════════════════════════ --}}
+<table style="width:100%; border-collapse:collapse; margin-bottom:16px; background:#ffffff; border:1px solid #e8e0e3; border-top:3px solid #6b1a2a;">
+    <tr>
+        <td style="padding:12px 16px; vertical-align:middle;">
+            <div style="font-family:'Playfair Display','DejaVu Sans',serif; font-size:16px; font-weight:700; color:#4a1020; letter-spacing:0.5px; margin-bottom:4px;">{{ $nombre_completo ?? '—' }}</div>
+            <div style="font-size:8px; color:#8a7880; letter-spacing:0.3px; line-height:1.7;">
+                {{ $direccion ?? '' }}{{ !empty($localidad) ? ' — ' . $localidad : '' }}
+                @if(!empty($nro_tarjeta))
+                    &nbsp;&nbsp;·&nbsp;&nbsp;N° Tarjeta: {{ $nro_tarjeta }}
+                @endif
+            </div>
+        </td>
+        <td style="padding:12px 16px; vertical-align:middle; text-align:right; width:150px;">
+            <div style="font-size:6.5px; letter-spacing:1.5px; text-transform:uppercase; color:#c8bcc0; margin-bottom:4px;">N° Socio</div>
+            <div style="background:#6b1a2a; color:#ffffff; font-family:'DejaVu Sans Mono',monospace; font-size:8.5px; font-weight:500; letter-spacing:1px; padding:5px 10px; display:inline-block;">{{ $nro_socio ?? '—' }}</div>
+        </td>
+    </tr>
+</table>
+
+{{-- ══════════════════════════════════ 3. CARDS TOTALES ══════════════════════════════════ --}}
+<table style="width:100%; border-collapse:collapse; margin-bottom:10px;">
+    <tr>
+        {{-- Saldo Actual — hero card --}}
+        <td style="width:25%; padding-right:8px; vertical-align:top;">
+            <div style="background:#6b1a2a; padding:11px 14px; position:relative; overflow:hidden;">
+                <div style="font-size:6.5px; text-transform:uppercase; letter-spacing:1.5px; font-weight:700; color:rgba(201,169,110,0.85); margin-bottom:7px;">Saldo Actual</div>
+                <div style="font-family:'DejaVu Sans Mono',monospace; font-size:16px; font-weight:700; color:#ffffff; letter-spacing:-0.3px;">$ {{ $saldo_actual ?? '0.00' }}</div>
+            </div>
+        </td>
+        {{-- Pago Mínimo --}}
+        <td style="width:25%; padding-right:8px; vertical-align:top;">
+            <div style="background:#ffffff; border:1px solid #e8e0e3; border-top:2px solid #6b1a2a; padding:11px 14px;">
+                <div style="font-size:6.5px; text-transform:uppercase; letter-spacing:1.5px; font-weight:700; color:#c8bcc0; margin-bottom:7px;">Pago Mínimo</div>
+                <div style="font-family:'DejaVu Sans Mono',monospace; font-size:15px; font-weight:700; color:#6b1a2a;">$ {{ $pago_minimo ?? '0.00' }}</div>
+            </div>
+        </td>
+        {{-- Saldo Anterior --}}
+        <td style="width:25%; padding-right:8px; vertical-align:top;">
+            <div style="background:#ffffff; border:1px solid #e8e0e3; border-top:2px solid #6b1a2a; padding:11px 14px;">
+                <div style="font-size:6.5px; text-transform:uppercase; letter-spacing:1.5px; font-weight:700; color:#c8bcc0; margin-bottom:7px;">Saldo Anterior</div>
+                <div style="font-family:'DejaVu Sans Mono',monospace; font-size:15px; font-weight:700; color:#6b1a2a;">$ {{ $saldo_anterior ?? '0.00' }}</div>
+            </div>
+        </td>
+        {{-- Vencimiento --}}
+        <td style="width:25%; vertical-align:top;">
+            <div style="background:#ffffff; border:1px solid #e8e0e3; border-top:2px solid #c9a96e; padding:11px 14px;">
+                <div style="font-size:6.5px; text-transform:uppercase; letter-spacing:1.5px; font-weight:700; color:#c8bcc0; margin-bottom:7px;">Vencimiento</div>
+                <div style="font-family:'DejaVu Sans Mono',monospace; font-size:15px; font-weight:700; color:#6b1a2a;">{{ $fecha_vencimiento ?? '—' }}</div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+{{-- Barra secundaria Límite / Consumo --}}
+<table style="width:100%; border-collapse:collapse; margin-bottom:20px;">
+    <tr>
+        <td style="width:50%; background:#fdf5f6; border:1px solid #e8e0e3; border-right:none; padding:9px 14px; vertical-align:middle;">
+            <div style="font-size:6.5px; text-transform:uppercase; letter-spacing:1.2px; color:#8a7880; font-weight:600; margin-bottom:3px;">Límite de Compra</div>
+            <div style="font-family:'DejaVu Sans Mono',monospace; font-size:13px; font-weight:600; color:#4a3840;">$ {{ $limite_compra ?? '0.00' }}</div>
+        </td>
+        <td style="width:50%; background:#fdf5f6; border:1px solid #e8e0e3; padding:9px 14px; vertical-align:middle;">
+            <div style="font-size:6.5px; text-transform:uppercase; letter-spacing:1.2px; color:#8a7880; font-weight:600; margin-bottom:3px;">Consumo Actual</div>
+            <div style="font-family:'DejaVu Sans Mono',monospace; font-size:13px; font-weight:600; color:#4a3840;">$ {{ $consumo_actual ?? '0.00' }}</div>
+        </td>
+    </tr>
+</table>
+
+{{-- ══════════════════════════════════ 4. MOVIMIENTOS ══════════════════════════════════ --}}
+@if(!empty($movimientos))
+    {{-- Section title --}}
+    <table style="width:100%; border-collapse:collapse; margin-bottom:8px;">
         <tr>
-            <td class="cliente-info-cell">
-                <div class="cliente-nombre">{{ $nombre_completo ?? '—' }}</div>
-                <div class="cliente-dato">
-                    {{ $direccion ?? '' }}{{ !empty($localidad) ? ' — ' . $localidad : '' }}
-                    @if(!empty($nro_tarjeta))
-                        &nbsp;&nbsp;·&nbsp;&nbsp;N° Tarjeta: {{ $nro_tarjeta }}
-                    @endif
-                </div>
-            </td>
-            <td class="cliente-badge-cell">
-                <div class="badge-label">N° Socio</div>
-                <div class="badge-socio">{{ $nro_socio ?? '—' }}</div>
-            </td>
+            <td style="font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:2.5px; color:#6b1a2a; white-space:nowrap; padding-right:12px; vertical-align:middle; width:1%;">Movimientos del Período</td>
+            <td style="border-bottom:1px solid #e8e0e3; vertical-align:middle;"></td>
         </tr>
     </table>
-</div>
 
-{{-- ══════════════════════════════════════════════════════ --}}
-{{-- 3. CARDS DE TOTALES (4 columnas)                       --}}
-{{-- ══════════════════════════════════════════════════════ --}}
-<table style="width:100%; border-collapse:collapse; margin-bottom:8px;">
-    <tr>
-        <td style="width:25%; padding-right:6px;">
-            <div class="card-highlight">
-                <div class="card-label">Saldo Actual</div>
-                <div class="card-value">$ {{ $saldo_actual ?? '0.00' }}</div>
-            </div>
-        </td>
-        <td style="width:25%; padding:0 3px;">
-            <div class="card">
-                <div class="card-label">Pago Mínimo</div>
-                <div class="card-value">$ {{ $pago_minimo ?? '0.00' }}</div>
-            </div>
-        </td>
-        <td style="width:25%; padding:0 3px;">
-            <div class="card">
-                <div class="card-label">Saldo Anterior</div>
-                <div class="card-value">$ {{ $saldo_anterior ?? '0.00' }}</div>
-            </div>
-        </td>
-        <td style="width:25%; padding-left:6px;">
-            <div class="card">
-                <div class="card-label">Vencimiento</div>
-                <div class="card-value">{{ $fecha_vencimiento ?? '—' }}</div>
-            </div>
-        </td>
-    </tr>
-</table>
-
-<table style="width:100%; border-collapse:collapse; margin-top:6px; margin-bottom:16px;">
-    <tr>
-        <td style="width:50%; padding:6px 10px; background:#f8f8f6; border:1px solid #e5e5e5;">
-            <div style="font-size:8px; color:#999; text-transform:uppercase; letter-spacing:1px; margin-bottom:2px;">
-                Límite de compra
-            </div>
-            <div style="font-size:12px; font-weight:700; color:#555; font-family:'Courier New',monospace;">
-                $ {{ $limite_compra ?? '0.00' }}
-            </div>
-        </td>
-        <td style="width:16px;"></td>
-        <td style="width:50%; padding:6px 10px; background:#f8f8f6; border:1px solid #e5e5e5;">
-            <div style="font-size:8px; color:#999; text-transform:uppercase; letter-spacing:1px; margin-bottom:2px;">
-                Consumo actual
-            </div>
-            <div style="font-size:12px; font-weight:700; color:#555; font-family:'Courier New',monospace;">
-                $ {{ $consumo_actual ?? '0.00' }}
-            </div>
-        </td>
-    </tr>
-</table>
-
-{{-- ══════════════════════════════════════════════════════ --}}
-{{-- 4. TABLA DE MOVIMIENTOS                               --}}
-{{-- ══════════════════════════════════════════════════════ --}}
-@if(!empty($movimientos))
-<div class="section-title">Movimientos del Período</div>
-<table class="mov-table">
-    <thead>
-        <tr>
-            <th style="width:13%">Fecha</th>
-            <th style="width:14%">Comprobante</th>
-            <th>Descripción</th>
-            <th style="width:9%">Cuota</th>
-            <th class="col-right" style="width:17%">Importe</th>
+    <table style="width:100%; border-collapse:collapse; margin-bottom:20px; font-size:8.5px;">
+        <thead>
+        <tr style="background:#4a1020;">
+            <th style="padding:8px 10px; text-align:left; font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:rgba(201,169,110,0.9); width:13%;">Fecha</th>
+            <th style="padding:8px 10px; text-align:left; font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:rgba(201,169,110,0.9); width:14%;">Comprobante</th>
+            <th style="padding:8px 10px; text-align:left; font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:rgba(201,169,110,0.9);">Descripción</th>
+            <th style="padding:8px 10px; text-align:left; font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:rgba(201,169,110,0.9); width:9%;">Cuota</th>
+            <th style="padding:8px 10px; text-align:right; font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:rgba(201,169,110,0.9); width:17%;">Importe</th>
         </tr>
-    </thead>
-    <tbody>
+        </thead>
+        <tbody>
         @php $i = 0; @endphp
         @foreach($movimientos as $mov)
             @php
                 $i++;
                 $esPago = str_starts_with(trim($mov['importe'] ?? ''), '-');
+                $bgRow = $i % 2 === 0 ? '#fdf5f6' : '#ffffff';
             @endphp
-            <tr class="{{ $i % 2 === 0 ? 'row-even' : 'row-odd' }}">
-                <td>{{ $mov['fecha'] ?? '' }}</td>
-                <td>{{ $mov['comprobante'] ?? '' }}</td>
-                <td>{{ $mov['descripcion'] ?? '' }}</td>
-                <td>{{ $mov['cuota'] ?? '' }}</td>
-                <td class="col-right {{ $esPago ? 'importe-pago' : 'importe-cargo' }}">
+            <tr style="background:{{ $bgRow }}; border-bottom:1px solid #e8e0e3;">
+                <td style="padding:6px 10px; color:#1a1214; font-size:8.5px;">{{ $mov['fecha'] ?? '' }}</td>
+                <td style="padding:6px 10px; color:#1a1214; font-size:8.5px;">{{ $mov['comprobante'] ?? '' }}</td>
+                <td style="padding:6px 10px; color:#1a1214; font-size:8.5px;">{{ $mov['descripcion'] ?? '' }}</td>
+                <td style="padding:6px 10px; color:#1a1214; font-size:8.5px;">{{ $mov['cuota'] ?? '' }}</td>
+                <td style="padding:6px 10px; text-align:right; font-family:'DejaVu Sans Mono',monospace; font-size:8px; {{ $esPago ? 'color:#15803d; font-weight:600;' : 'color:#6b1a2a;' }}">
                     {{ $mov['importe'] ?? '' }}
                 </td>
             </tr>
         @endforeach
-    </tbody>
-    <tfoot>
-        <tr class="mov-tfoot-row">
-            <td colspan="4" style="text-align:right; letter-spacing:0.5px;">Subtotal del período:</td>
-            <td style="text-align:right; font-family:'DejaVu Sans Mono',monospace; font-size:10px;">
-                $ {{ $consumo_actual ?? '0.00' }}
-            </td>
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="4" style="padding:7px 10px; background:#f7f0f2; border-top:2px solid #6b1a2a; font-weight:700; font-size:8.5px; color:#4a1020; text-align:right; letter-spacing:0.5px;">Subtotal del período:</td>
+            <td style="padding:7px 10px; background:#f7f0f2; border-top:2px solid #6b1a2a; font-weight:700; font-size:9px; color:#4a1020; text-align:right; font-family:'DejaVu Sans Mono',monospace;">$ {{ $consumo_actual ?? '0.00' }}</td>
         </tr>
-    </tfoot>
-</table>
+        </tfoot>
+    </table>
 @endif
 
-{{-- ══════════════════════════════════════════════════════ --}}
-{{-- 5. RESUMEN DEL PERÍODO (4 columnas)                    --}}
-{{-- ══════════════════════════════════════════════════════ --}}
-<div class="section-title">Resumen del Período</div>
-<table class="rf-table">
+{{-- ══════════════════════════════════ 5. RESUMEN DEL PERÍODO ══════════════════════════════════ --}}
+<table style="width:100%; border-collapse:collapse; margin-bottom:8px;">
     <tr>
-        <td class="rf-cell">
-            <div class="rf-box">
-                <div class="rf-label">Gastos de Resumen</div>
-                <div class="rf-value">$ {{ $gastos_resumen ?? '0.00' }}</div>
+        <td style="font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:2.5px; color:#6b1a2a; white-space:nowrap; padding-right:12px; vertical-align:middle; width:1%;">Resumen del Período</td>
+        <td style="border-bottom:1px solid #e8e0e3; vertical-align:middle;"></td>
+    </tr>
+</table>
+
+<table style="width:100%; border-collapse:collapse; margin-bottom:16px;">
+    <tr>
+        <td style="width:25%; padding-right:7px; vertical-align:top;">
+            <div style="border:1px solid #e8e0e3; border-left:3px solid #c9a96e; background:#ffffff; padding:9px 12px;">
+                <div style="font-size:6.5px; text-transform:uppercase; letter-spacing:1px; color:#8a7880; font-weight:600; margin-bottom:5px;">Gastos de Resumen</div>
+                <div style="font-family:'DejaVu Sans Mono',monospace; font-size:12px; font-weight:600; color:#6b1a2a;">$ {{ $gastos_resumen ?? '0.00' }}</div>
             </div>
         </td>
-        <td class="rf-cell">
-            <div class="rf-box">
-                <div class="rf-label">Sellado</div>
-                <div class="rf-value">$ {{ $sellado ?? '0.00' }}</div>
+        <td style="width:25%; padding-right:7px; vertical-align:top;">
+            <div style="border:1px solid #e8e0e3; border-left:3px solid #c9a96e; background:#ffffff; padding:9px 12px;">
+                <div style="font-size:6.5px; text-transform:uppercase; letter-spacing:1px; color:#8a7880; font-weight:600; margin-bottom:5px;">Sellado</div>
+                <div style="font-family:'DejaVu Sans Mono',monospace; font-size:12px; font-weight:600; color:#6b1a2a;">$ {{ $sellado ?? '0.00' }}</div>
             </div>
         </td>
-        <td class="rf-cell">
-            <div class="rf-box">
-                <div class="rf-label">Saldo Actual</div>
-                <div class="rf-value">$ {{ $saldo_actual ?? '0.00' }}</div>
+        <td style="width:25%; padding-right:7px; vertical-align:top;">
+            <div style="border:1px solid #e8e0e3; border-left:3px solid #c9a96e; background:#ffffff; padding:9px 12px;">
+                <div style="font-size:6.5px; text-transform:uppercase; letter-spacing:1px; color:#8a7880; font-weight:600; margin-bottom:5px;">Saldo Actual</div>
+                <div style="font-family:'DejaVu Sans Mono',monospace; font-size:12px; font-weight:600; color:#6b1a2a;">$ {{ $saldo_actual ?? '0.00' }}</div>
             </div>
         </td>
-        <td class="rf-cell">
-            <div class="rf-box">
-                <div class="rf-label">Consumo Actual</div>
-                <div class="rf-value">$ {{ $consumo_actual ?? '0.00' }}</div>
+        <td style="width:25%; vertical-align:top;">
+            <div style="border:1px solid #e8e0e3; border-left:3px solid #c9a96e; background:#ffffff; padding:9px 12px;">
+                <div style="font-size:6.5px; text-transform:uppercase; letter-spacing:1px; color:#8a7880; font-weight:600; margin-bottom:5px;">Consumo Actual</div>
+                <div style="font-family:'DejaVu Sans Mono',monospace; font-size:12px; font-weight:600; color:#6b1a2a;">$ {{ $consumo_actual ?? '0.00' }}</div>
             </div>
         </td>
     </tr>
 </table>
 
-{{-- ══════════════════════════════════════════════════════ --}}
-{{-- 6. AVISO ACEPTADO                                      --}}
-{{-- ══════════════════════════════════════════════════════ --}}
-<div class="aviso-box">
-    <span class="aviso-check">&#10003;</span>
+{{-- ══════════════════════════════════ 6. AVISO ══════════════════════════════════ --}}
+<div style="background:#f0fdf4; border:1px solid #bbf7d0; border-left:3px solid #16a34a; padding:8px 13px; margin-bottom:16px; font-size:7.5px; color:#166534; line-height:1.7;">
+    <span style="font-weight:700; font-size:10px; margin-right:5px;">&#10003;</span>
     Este resumen se considera <strong>ACEPTADO</strong> si no se presenta reclamo
     dentro de los 30 días de su recepción, de conformidad con la Ley 25.065 de
     Tarjetas de Crédito y la normativa vigente del Banco Central de la República Argentina.
 </div>
 
-{{-- ══════════════════════════════════════════════════════ --}}
-{{-- 7. CUPÓN DE PAGO                                       --}}
-{{-- ══════════════════════════════════════════════════════ --}}
-<hr class="cupon-divider">
-<div class="cupon-title">✂ Cupón de Pago</div>
+{{-- ══════════════════════════════════ 7. CUPÓN DE PAGO ══════════════════════════════════ --}}
+<hr style="border:none; border-top:1.5px dashed #c8bcc0; margin:16px 0 12px;">
+<div style="font-size:7px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#8a7880; text-align:center; margin-bottom:10px;">✂ Cupón de Pago</div>
 
-<table class="cupon-table">
+<table style="width:100%; border-collapse:collapse; font-size:8.5px; margin-bottom:10px;">
     <thead>
-        <tr>
-            <th style="width:28%">Número Tarjeta</th>
-            <th style="width:44%">Titular</th>
-            <th style="width:28%">N° Resumen</th>
-        </tr>
+    <tr>
+        <th style="background:#f7f0f2; border:1px solid #e8e0e3; padding:5px 9px; font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#4a3840; text-align:left; width:28%;">Número Tarjeta</th>
+        <th style="background:#f7f0f2; border:1px solid #e8e0e3; padding:5px 9px; font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#4a3840; text-align:left; width:44%;">Titular</th>
+        <th style="background:#f7f0f2; border:1px solid #e8e0e3; padding:5px 9px; font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#4a3840; text-align:left; width:28%;">N° Resumen</th>
+    </tr>
     </thead>
     <tbody>
-        <tr>
-            <td><span class="cupon-val-dark">{{ $nro_tarjeta ?? '—' }}</span></td>
-            <td><span class="cupon-val-dark">{{ $nombre_completo ?? '—' }}</span></td>
-            <td><span class="cupon-val-dark">{{ $nro_socio ?? '—' }}</span></td>
-        </tr>
+    <tr>
+        <td style="border:1px solid #e8e0e3; padding:8px 10px;"><span style="font-family:'DejaVu Sans Mono',monospace; font-size:10px; font-weight:600; color:#6b1a2a;">{{ $nro_tarjeta ?? '—' }}</span></td>
+        <td style="border:1px solid #e8e0e3; padding:8px 10px;"><span style="font-family:'DejaVu Sans Mono',monospace; font-size:10px; font-weight:600; color:#6b1a2a;">{{ $nombre_completo ?? '—' }}</span></td>
+        <td style="border:1px solid #e8e0e3; padding:8px 10px;"><span style="font-family:'DejaVu Sans Mono',monospace; font-size:10px; font-weight:600; color:#6b1a2a;">{{ $nro_socio ?? '—' }}</span></td>
+    </tr>
     </tbody>
     <thead>
-        <tr>
-            <th colspan="2">Saldo Actual</th>
-            <th>Pago Mínimo</th>
-        </tr>
+    <tr>
+        <th colspan="2" style="background:#f7f0f2; border:1px solid #e8e0e3; padding:5px 9px; font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#4a3840; text-align:left;">Saldo Actual</th>
+        <th style="background:#f7f0f2; border:1px solid #e8e0e3; padding:5px 9px; font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#4a3840; text-align:left;">Pago Mínimo</th>
+    </tr>
     </thead>
     <tbody>
-        <tr>
-            <td colspan="2" class="cupon-td-dark">
-                <span class="cupon-val-label-white">Saldo Actual</span>
-                <span class="cupon-val-white">$ {{ $saldo_actual ?? '0.00' }}</span>
-            </td>
-            <td class="cupon-td-mid">
-                <span class="cupon-val-label-white">Pago Mínimo</span>
-                <span class="cupon-val-white">$ {{ $pago_minimo ?? '0.00' }}</span>
-            </td>
-        </tr>
+    <tr>
+        <td colspan="2" style="border:1px solid #e8e0e3; padding:9px 10px; background:#4a1020;">
+            <span style="font-size:6px; text-transform:uppercase; letter-spacing:1px; color:rgba(201,169,110,0.75); display:block; margin-bottom:3px;">Saldo Actual</span>
+            <span style="font-family:'DejaVu Sans Mono',monospace; font-size:14px; font-weight:600; color:#ffffff;">$ {{ $saldo_actual ?? '0.00' }}</span>
+        </td>
+        <td style="border:1px solid #e8e0e3; padding:9px 10px; background:#4a3840;">
+            <span style="font-size:6px; text-transform:uppercase; letter-spacing:1px; color:rgba(201,169,110,0.75); display:block; margin-bottom:3px;">Pago Mínimo</span>
+            <span style="font-family:'DejaVu Sans Mono',monospace; font-size:14px; font-weight:600; color:#ffffff;">$ {{ $pago_minimo ?? '0.00' }}</span>
+        </td>
+    </tr>
     </tbody>
     <thead>
-        <tr>
-            <th colspan="3">Importe Abonado</th>
-        </tr>
+    <tr>
+        <th colspan="3" style="background:#f7f0f2; border:1px solid #e8e0e3; padding:5px 9px; font-size:6.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#4a3840; text-align:left;">Importe Abonado</th>
+    </tr>
     </thead>
     <tbody>
-        <tr>
-            <td colspan="3" class="cupon-td-blank" style="height:28px;">
-                &nbsp;
-            </td>
-        </tr>
+    <tr>
+        <td colspan="3" style="border:1px solid #e8e0e3; padding:8px 10px; background:#ffffff; height:30px;">&nbsp;</td>
+    </tr>
     </tbody>
 </table>
 
-<div class="cupon-firma">
-    SON PESOS: <span class="cupon-firma-line">&nbsp;</span>
+<div style="font-size:8px; color:#4a3840; line-height:2.5; letter-spacing:0.3px;">
+    SON PESOS: <span style="display:inline-block; width:180px; border-bottom:1px solid #4a3840;">&nbsp;</span>
     &nbsp;&nbsp;&nbsp;&nbsp; FECHA: ___/___/___
-    &nbsp;&nbsp;&nbsp;&nbsp; FIRMA: <span class="cupon-firma-line">&nbsp;</span>
+    &nbsp;&nbsp;&nbsp;&nbsp; FIRMA: <span style="display:inline-block; width:140px; border-bottom:1px solid #4a3840;">&nbsp;</span>
 </div>
 
-{{-- ══════════════════════════════════════════════════════ --}}
-{{-- 8. PIE LEGAL                                           --}}
-{{-- ══════════════════════════════════════════════════════ --}}
-<hr class="pie-divider">
-<div class="pie-texto">
+{{-- ══════════════════════════════════ 8. PIE ══════════════════════════════════ --}}
+<table style="width:100%; border-collapse:collapse; margin:16px 0 10px;">
+    <tr>
+        <td style="text-align:center; padding:9px 14px; background:#fdf5f6; border:1px solid #e8e0e3; border-left:4px solid #c9a96e;">
+            <p style="font-size:9.5px; font-weight:700; color:#6b1a2a; letter-spacing:1.5px; text-transform:uppercase; margin:0;">
+                PAGOS DE 8 a 13:00 hs &nbsp;·&nbsp; 17 a 18:30 hs
+            </p>
+        </td>
+    </tr>
+</table>
+<hr style="border:none; border-top:1px solid #e8e0e3; margin-bottom:8px;">
+<div style="font-size:6.5px; color:#c8bcc0; text-align:center; line-height:1.8;">
     Ley 25.065 — Régimen de Tarjetas de Crédito y Compra. Tasa Nominal Anual (TNA) y Costo Financiero Total (CFT)
     informados al momento de la acreditación. Las tasas pueden variar según las condiciones pactadas.
     Ante consultas o reclamos comunicarse con la Mutual al número habitual o presentarse en la sede social.
 </div>
-<table class="pie-footer-table">
+<table style="width:100%; border-collapse:collapse; margin-top:6px;">
     <tr>
-        <td class="pie-footer-left">MUTUAL DE AMIGOS — CLUB SARMIENTO</td>
-        <td class="pie-footer-right">
-            Resumen N° {{ $nro_socio ?? '—' }} &nbsp;|&nbsp; {{ $fecha_periodo ?? '' }}
-        </td>
+        <td style="text-align:left; font-size:6.5px; color:#c8bcc0;">MUTUAL DE AMIGOS — CLUB SARMIENTO</td>
+        <td style="text-align:right; font-size:6.5px; color:#c8bcc0;">Resumen N° {{ $nro_socio ?? '—' }} &nbsp;|&nbsp; {{ $fecha_periodo ?? '' }}</td>
     </tr>
 </table>
 

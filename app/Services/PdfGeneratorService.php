@@ -23,7 +23,7 @@ class PdfGeneratorService
             ['movimientos_count' => count($datos['movimientos'] ?? [])]
         ));
 
-        $logoPath   = public_path('logo.jpg');
+        $logoPath   = public_path('images/logo-credicas.png');
         $logoBase64 = '';
         if (file_exists($logoPath)) {
             $logoMime   = mime_content_type($logoPath);
