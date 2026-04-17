@@ -64,7 +64,7 @@
     </div>
 
     <!-- Stats -->
-    <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:24px;">
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px;">
         <div style="background:#18181b; border:1px solid #27272a; border-radius:10px; padding:16px 20px;">
             <p style="font-size:11px; color:#71717a; text-transform:uppercase; letter-spacing:0.05em; margin:0 0 4px;">Pendientes</p>
             <p style="font-size:28px; font-weight:700; color:#fafafa; margin:0;">{{ $stats['pendiente'] ?? 0 }}</p>
@@ -80,10 +80,6 @@
         <div style="background:#18181b; border:1px solid #27272a; border-radius:10px; padding:16px 20px;">
             <p style="font-size:11px; color:#71717a; text-transform:uppercase; letter-spacing:0.05em; margin:0 0 4px;">Errores</p>
             <p style="font-size:28px; font-weight:700; color:#ef4444; margin:0;">{{ $stats['error'] ?? 0 }}</p>
-        </div>
-        <div style="background:#18181b; border:1px solid #27272a; border-radius:10px; padding:16px 20px;">
-            <p style="font-size:11px; color:#71717a; text-transform:uppercase; letter-spacing:0.05em; margin:0 0 4px;">Sin celular</p>
-            <p style="font-size:28px; font-weight:700; color:#a1a1aa; margin:0;">{{ $stats['sin_celular'] ?? 0 }}</p>
         </div>
     </div>
 

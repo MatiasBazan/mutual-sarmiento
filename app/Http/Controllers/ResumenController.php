@@ -27,14 +27,6 @@ class ResumenController extends Controller
             ->groupBy('estado')
             ->pluck('total', 'estado');
 
-        $sinCelularCount = Resumen::with('cliente')
-            ->where('periodo', $periodoActual)
-            ->whereIn('estado', [Resumen::PENDIENTE, Resumen::ERROR])
-            ->get()
-            ->filter(fn($r) => empty($r->cliente->celular))
-            ->count();
-
-        $stats['sin_celular'] = $sinCelularCount;
 
         return view('resumenes.index', compact('resumenes', 'stats', 'periodoActual'));
     }
