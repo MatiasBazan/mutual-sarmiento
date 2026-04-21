@@ -130,6 +130,41 @@
         </div>
     </div>
 
+    <!-- Barra de filtros -->
+    <form method="GET" action="{{ route('resumenes.index') }}" id="filtrosForm"
+          style="display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap; align-items:center;">
+        <div style="position:relative; flex:1; min-width:220px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#71717a" stroke-width="2" stroke-linecap="round"
+                 style="position:absolute; left:12px; top:50%; transform:translateY(-50%); pointer-events:none;">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" name="q" value="{{ $q }}" placeholder="Buscar por nombre…"
+                   autocomplete="off"
+                   style="width:100%; background:#18181b; border:1px solid #27272a; border-radius:8px; padding:8px 12px 8px 34px; font-size:13px; color:#fafafa; outline:none;"
+                   onfocus="this.style.borderColor='#3f3f46'" onblur="this.style.borderColor='#27272a'">
+        </div>
+
+        <select name="celular" onchange="document.getElementById('filtrosForm').submit()"
+                style="background:#18181b; border:1px solid #27272a; border-radius:8px; padding:8px 12px; font-size:13px; color:#fafafa; outline:none; cursor:pointer; min-width:170px;"
+                onfocus="this.style.borderColor='#3f3f46'" onblur="this.style.borderColor='#27272a'">
+            <option value="todos" @selected($celular === 'todos')>Todos los celulares</option>
+            <option value="con"   @selected($celular === 'con')>Con celular</option>
+            <option value="sin"   @selected($celular === 'sin')>Sin celular</option>
+        </select>
+
+        @if($q !== '' || $celular !== 'todos')
+        <a href="{{ route('resumenes.index') }}"
+           style="display:inline-flex; align-items:center; gap:6px; padding:8px 12px; border:1px solid #27272a; border-radius:8px; font-size:12px; color:#a1a1aa; text-decoration:none; background:#18181b;"
+           onmouseover="this.style.borderColor='#3f3f46'; this.style.color='#fafafa'"
+           onmouseout="this.style.borderColor='#27272a'; this.style.color='#a1a1aa'">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+            Limpiar
+        </a>
+        @endif
+    </form>
+
     <!-- Tabla -->
     <div style="background:#18181b; border:1px solid #27272a; border-radius:12px; overflow:hidden;">
         <table style="width:100%; border-collapse:collapse;">
@@ -464,6 +499,27 @@
 </x-app-layout>
 
 <script>
+// Auto-submit del filtro de búsqueda con debounce + restaurar focus tras reload
+(function() {
+    const form  = document.getElementById('filtrosForm');
+    if (!form) return;
+    const input = form.querySelector('input[name="q"]');
+    if (!input) return;
+
+    // Si había búsqueda activa, devolver el foco al input con el cursor al final
+    if (input.value) {
+        input.focus();
+        const len = input.value.length;
+        input.setSelectionRange(len, len);
+    }
+
+    let t;
+    input.addEventListener('input', () => {
+        clearTimeout(t);
+        t = setTimeout(() => form.submit(), 400);
+    });
+})();
+
 let resumenIdAEliminar = null;
 
 function confirmarEliminarResumen(id) {

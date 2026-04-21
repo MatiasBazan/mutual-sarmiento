@@ -12,23 +12,53 @@ use Illuminate\Support\Str;
 
 class ResumenController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $periodoActual = now()->format('Y-m');
 
-        $resumenes = Resumen::with('cliente')
+        $q       = trim((string) $request->query('q', ''));
+        $celular = $request->query('celular', 'todos');
+        if (!in_array($celular, ['todos', 'con', 'sin'], true)) {
+            $celular = 'todos';
+        }
+
+        // Escapar wildcards de LIKE para que %_\ se busquen como literales.
+        $qEscaped = addcslashes($q, '%_\\');
+
+        $baseQuery = Resumen::query()
             ->where('periodo', $periodoActual)
+            ->when($q !== '', function ($query) use ($qEscaped) {
+                $query->whereHas('cliente', function ($qb) use ($qEscaped) {
+                    $qb->where('nombre_completo', 'like', "%{$qEscaped}%")
+                       ->orWhere('apellido', 'like', "%{$qEscaped}%");
+                });
+            })
+            ->when($celular === 'con', fn($query) =>
+                $query->whereHas('cliente', fn($qb) =>
+                    $qb->whereNotNull('celular')->where('celular', '<>', '')
+                )
+            )
+            ->when($celular === 'sin', fn($query) =>
+                $query->whereHas('cliente', fn($qb) =>
+                    $qb->where(fn($w) => $w->whereNull('celular')->orWhere('celular', ''))
+                )
+            );
+
+        $resumenes = (clone $baseQuery)
+            ->with('cliente')
             ->orderBy('estado')
             ->orderBy('id')
-            ->paginate(30);
+            ->paginate(30)
+            ->withQueryString();
 
-        $stats = Resumen::where('periodo', $periodoActual)
+        // Stats reflejan los filtros activos.
+        $stats = (clone $baseQuery)
             ->selectRaw('estado, count(*) as total')
             ->groupBy('estado')
             ->pluck('total', 'estado');
 
 
-        return view('resumenes.index', compact('resumenes', 'stats', 'periodoActual'));
+        return view('resumenes.index', compact('resumenes', 'stats', 'periodoActual', 'q', 'celular'));
     }
 
     public function importar(Request $request)

@@ -22,6 +22,26 @@
             -moz-user-select: none;
             user-select: none;
         }
+
+        /* Ticker horizontal para el nombre de la mutual */
+        .ticker {
+            overflow: hidden;
+            width: 800px;
+            white-space: nowrap;
+            line-height: 1.3;
+        }
+        .ticker-text {
+            display: inline-block;
+            font-size: 30px;
+            font-weight: 700;
+            color: #fafafa;
+            animation: ticker-scroll 18s linear infinite;
+            will-change: transform;
+        }
+        @keyframes ticker-scroll {
+            0%   { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
     </style>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -33,8 +53,17 @@
             <img src="{{ asset('logo.jpg') }}" alt="{{ config('app.name') }}"
                  style="height:40px; width:auto; object-fit:contain; border-radius:6px; flex-shrink:0;">
             <div style="display:flex; flex-direction:column; gap:2px;">
-                <span style="font-size:10px; color:#71717a; letter-spacing:3px; text-transform:uppercase; line-height:1;">Mutual de Amigos</span>
-                <span style="font-size:17px; font-weight:700; color:#fafafa; line-height:1.3;">Club Sarmiento</span>
+                <div class="ticker" style="
+                      font-size: 18px;
+                      color: #71717a;
+                      letter-spacing: 3px;
+                      text-transform: uppercase;
+                      line-height: 1;
+                    ">
+                      <span class="ticker-text">
+                        Mutual de Amigos Club Sarmiento
+                      </span>
+                </div>
             </div>
         </div>
         <div style="font-family:'Courier New', monospace; font-size:48px; font-weight:700; color:#fafafa; letter-spacing:4px;"
@@ -52,10 +81,9 @@
     ">
         <template x-for="box in boxes" :key="box.id">
             <div :style="`
-                background: #18181b;
-                border: 2px solid ${colorFor(box.box_status)};
+                background: ${colorFor(box.box_status)};
                 border-radius: 16px;
-                box-shadow: 0 0 40px ${colorFor(box.box_status)}15;
+                box-shadow: 0 0 40px ${colorFor(box.box_status)}40;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -72,28 +100,28 @@
                     width: 14px;
                     height: 14px;
                     border-radius: 50%;
-                    background: ${colorFor(box.box_status)};
-                    box-shadow: 0 0 16px ${colorFor(box.box_status)};
+                    background: ${textColorFor(box.box_status)};
+                    box-shadow: 0 0 16px ${textColorFor(box.box_status)}80;
                 `"></div>
 
-                <!-- Nombre del box -->
-                <p :style="`
-                    font-size: 13px;
-                    font-weight: 500;
-                    color: #71717a;
-                    letter-spacing: 3px;
-                    text-transform: uppercase;
-                    margin: 0;
-                `" x-text="boxLabel(box)"></p>
-
-                <!-- Nombre del empleado -->
+                <!-- Nombre del box (grande) -->
                 <h2 :style="`
                     font-size: clamp(2rem, 4vw, 3.5rem);
                     font-weight: 700;
-                    color: #fafafa;
+                    color: ${textColorFor(box.box_status)};
                     line-height: 1;
                     margin: 0;
-                `" x-text="box.name"></h2>
+                `" x-text="boxLabel(box)"></h2>
+
+                <!-- Nombre del empleado (chico) -->
+                <p :style="`
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: ${textColorFor(box.box_status)};
+                    letter-spacing: 3px;
+                    text-transform: uppercase;
+                    margin: 0;
+                `" x-text="box.name"></p>
 
                 <!-- Badge estado -->
                 <span :style="`
@@ -106,9 +134,9 @@
                     font-weight: 700;
                     letter-spacing: 2px;
                     text-transform: uppercase;
-                    background: ${colorFor(box.box_status)}18;
+                    background: ${textColorFor(box.box_status)};
                     color: ${colorFor(box.box_status)};
-                    border: 1px solid ${colorFor(box.box_status)}40;
+                    border: 1px solid ${textColorFor(box.box_status)};
                 `" x-text="estadoLabel(box.box_status)"></span>
 
             </div>
@@ -143,6 +171,11 @@ function turneroTv() {
                 pausa:   '#f59e0b',
                 ausente: '#52525b',
             }[status] ?? '#52525b';
+        },
+
+        // Texto/íconos siempre blancos sobre el fondo de color del estado.
+        textColorFor() {
+            return '#ffffff';
         },
 
         boxLabel(box) {
