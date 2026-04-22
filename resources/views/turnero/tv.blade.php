@@ -51,7 +51,7 @@
     <header style="background:#09090b; border-bottom:1px solid #27272a; padding:0 48px; height:64px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0;">
         <div style="display:flex; align-items:center; gap:14px;">
             <img src="{{ asset('logo.jpg') }}" alt="{{ config('app.name') }}"
-                 style="height:40px; width:auto; object-fit:contain; border-radius:6px; flex-shrink:0;">
+                 style="height:56px; width:auto; object-fit:contain; border-radius:8px; flex-shrink:0;">
             <div style="display:flex; flex-direction:column; gap:2px;">
                 <div class="ticker" style="
                       font-size: 18px;

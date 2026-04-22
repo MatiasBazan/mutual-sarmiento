@@ -13,7 +13,7 @@
     </div>
 
     <!-- Tabla -->
-    <div style="background:#18181b; border:1px solid #27272a; border-radius:12px; overflow:hidden;">
+    <div style="background:#18181b; border:1px solid #27272a; border-radius:12px; overflow:visible;">
         <table style="width:100%; border-collapse:collapse;">
             <thead>
                 <tr style="background:#27272a;">
@@ -62,11 +62,10 @@
                         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
 
                             <!-- Dropdown cambiar estado -->
-                            <select onchange="cambiarEstadoAdmin({{ $u->id }}, this.value)"
-                                    style="background:#27272a; border:1px solid #3f3f46; border-radius:6px; padding:5px 10px; font-size:11px; color:#fafafa; cursor:pointer; outline:none;">
+                            <select class="select-estado" onchange="cambiarEstadoAdmin({{ $u->id }}, this.value)">
                                 <option value="libre"   {{ $u->box_status === 'libre'   ? 'selected' : '' }}>Libre</option>
                                 <option value="ocupado" {{ $u->box_status === 'ocupado' ? 'selected' : '' }}>Ocupado</option>
-                                <option value="pausa"   {{ $u->box_status === 'pausa'   ? 'selected' : '' }}>Pausa</option>
+                                <option value="pausa"   {{ $u->box_status === 'pausa'   ? 'selected' : '' }}>En pausa</option>
                                 <option value="ausente" {{ $u->box_status === 'ausente' ? 'selected' : '' }}>Ausente</option>
                             </select>
 
@@ -117,7 +116,7 @@
     </form>
 
     {{-- ─── MODAL CREAR/EDITAR ────────────────────────────────────────── --}}
-    <div :style="modal
+    <div x-cloak :style="modal
                 ? 'display:flex; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.75); backdrop-filter:blur(2px); align-items:center; justify-content:center; padding:16px;'
                 : 'display:none'"
          @click.self="modal = false">
@@ -182,9 +181,7 @@
                     </div>
                     <div>
                         <label style="display:block; font-size:11px; font-weight:600; color:#71717a; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px;">Rol</label>
-                        <select name="role" x-model="form.role" required
-                                style="width:100%; background:#27272a; border:1px solid #3f3f46; border-radius:7px; padding:8px 12px; font-size:13px; color:#fafafa; outline:none; cursor:pointer;"
-                                onfocus="this.style.borderColor='#71717a'" onblur="this.style.borderColor='#3f3f46'">
+                        <select name="role" x-model="form.role" required style="width:100%;">
                             <option value="empleado">Empleado</option>
                             <option value="turnero">Turnero (solo box y TV)</option>
                         </select>
@@ -237,7 +234,7 @@
     </div>
 
     {{-- ─── MODAL ELIMINAR ────────────────────────────────────────────── --}}
-    <div :style="modalEliminar
+    <div x-cloak :style="modalEliminar
                 ? 'display:flex; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.75); backdrop-filter:blur(2px); align-items:center; justify-content:center; padding:16px;'
                 : 'display:none'"
          @click.self="modalEliminar = false">

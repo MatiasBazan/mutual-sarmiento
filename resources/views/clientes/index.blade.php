@@ -44,9 +44,7 @@
                           padding:8px 12px 8px 34px; font-size:13px; color:#fafafa; outline:none;"
                    onfocus="this.style.borderColor='#71717a'" onblur="this.style.borderColor='#3f3f46'">
         </div>
-        <select id="filtroCelular" onchange="filtrarTabla()"
-                style="background:#27272a; border:1px solid #3f3f46; border-radius:7px;
-                       padding:8px 12px; font-size:13px; color:#fafafa; outline:none; cursor:pointer;">
+        <select id="filtroCelular" class="filtro-celular" onchange="filtrarTabla()">
             <option value="">Todos</option>
             <option value="con">Con celular</option>
             <option value="sin">Sin celular</option>
@@ -143,7 +141,7 @@
     </form>
 
     {{-- ─── MODAL NUEVO ──────────────────────────────────────────────── --}}
-    <div :style="modal
+    <div x-cloak :style="modal
                 ? 'display:flex; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.75); backdrop-filter:blur(2px); align-items:center; justify-content:center; padding:16px;'
                 : 'display:none'"
          @click.self="modal = false">
@@ -187,7 +185,7 @@
     </div>
 
     {{-- ─── MODAL EDITAR ──────────────────────────────────────────────── --}}
-    <div :style="modalEditar
+    <div x-cloak :style="modalEditar
                 ? 'display:flex; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.75); backdrop-filter:blur(2px); align-items:center; justify-content:center; padding:16px;'
                 : 'display:none'"
          @click.self="modalEditar = false">
@@ -259,7 +257,7 @@
     </div>
 
     {{-- ─── MODAL ELIMINAR ────────────────────────────────────────────── --}}
-    <div :style="modalEliminar
+    <div x-cloak :style="modalEliminar
                 ? 'display:flex; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.75); backdrop-filter:blur(2px); align-items:center; justify-content:center; padding:16px;'
                 : 'display:none'"
          @click.self="modalEliminar = false">

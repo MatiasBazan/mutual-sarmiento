@@ -15,7 +15,7 @@
         <div style="display:flex; align-items:center; gap:8px;">
 
             {{-- Badge de envío en curso --}}
-            <div x-show="enviando"
+            <div x-show="enviando" x-cloak
                  style="display:flex; align-items:center; gap:8px; background:#27272a; border:1px solid #3f3f46; border-radius:8px; padding:8px 16px;">
                 <div style="width:14px; height:14px; border-radius:50%; border:2px solid #3f3f46; border-top-color:#22c55e; animation:spin 0.8s linear infinite; flex-shrink:0;"></div>
                 <span style="font-size:13px; color:#a1a1aa;">Enviando resúmenes...</span>
@@ -84,7 +84,7 @@
     </div>
 
     <!-- Barra de progreso -->
-    <div x-show="enviando || progreso.total > 0"
+    <div x-show="enviando || progreso.total > 0" x-cloak
          style="margin-bottom:24px; background:#18181b; border:1px solid #27272a; border-radius:10px; padding:16px 20px;">
         <div style="display:flex; justify-content:space-between; font-size:13px; color:#a1a1aa; margin-bottom:8px;">
             <span>Progreso del envío</span>
@@ -101,7 +101,7 @@
     </div>
 
     <!-- Banner sin celular -->
-    <div x-show="mostrarSinCelular && sinCelularList.length > 0"
+    <div x-show="mostrarSinCelular && sinCelularList.length > 0" x-cloak
          style="margin-bottom:24px; background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.25); border-radius:10px; padding:14px 16px;">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
             <div style="display:flex; gap:10px; align-items:flex-start;">
@@ -144,9 +144,7 @@
                    onfocus="this.style.borderColor='#3f3f46'" onblur="this.style.borderColor='#27272a'">
         </div>
 
-        <select name="celular" onchange="document.getElementById('filtrosForm').submit()"
-                style="background:#18181b; border:1px solid #27272a; border-radius:8px; padding:8px 12px; font-size:13px; color:#fafafa; outline:none; cursor:pointer; min-width:170px;"
-                onfocus="this.style.borderColor='#3f3f46'" onblur="this.style.borderColor='#27272a'">
+        <select name="celular" class="filtro-select filtro-celular" onchange="document.getElementById('filtrosForm').submit()">
             <option value="todos" @selected($celular === 'todos')>Todos los celulares</option>
             <option value="con"   @selected($celular === 'con')>Con celular</option>
             <option value="sin"   @selected($celular === 'sin')>Sin celular</option>
@@ -154,8 +152,8 @@
 
         @if($q !== '' || $celular !== 'todos')
         <a href="{{ route('resumenes.index') }}"
-           style="display:inline-flex; align-items:center; gap:6px; padding:8px 12px; border:1px solid #27272a; border-radius:8px; font-size:12px; color:#a1a1aa; text-decoration:none; background:#18181b;"
-           onmouseover="this.style.borderColor='#3f3f46'; this.style.color='#fafafa'"
+           style="display:inline-flex; align-items:center; gap:6px; padding:0 14px; height:36px; border:1px solid #27272a; border-radius:8px; font-size:12px; color:#a1a1aa; text-decoration:none; background:#18181b; white-space:nowrap; flex-shrink:0;"
+           onmouseover="this.style.borderColor='#ef4444'; this.style.color='#ef4444'"
            onmouseout="this.style.borderColor='#27272a'; this.style.color='#a1a1aa'">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -286,7 +284,7 @@
     </div>
 
     <!-- Modal editar cliente -->
-    <div :style="modalEditarCliente
+    <div x-cloak :style="modalEditarCliente
                     ? 'display:flex; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.75); backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); align-items:center; justify-content:center; padding:16px;'
                     : 'display:none'"
          @click.self="modalEditarCliente = false">
@@ -373,7 +371,7 @@
         y el display:flex que necesita el overlay para centrar el contenido.
         z-index:9999 garantiza que quede por encima del layout y sidebar.
     --}}
-    <div :style="modalConfirm
+    <div x-cloak :style="modalConfirm
                     ? 'display:flex; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.75); backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); align-items:center; justify-content:center; padding:16px;'
                     : 'display:none'"
          @click.self="modalConfirm = false">

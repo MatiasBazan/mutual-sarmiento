@@ -1,5 +1,251 @@
+/* Choices.js base CSS */
+@import "choices.js/public/assets/styles/choices.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 [x-cloak] { display: none !important; }
+
+/* Evitar FOUC — estilar <select> nativo igual al wrapper .choices para que
+   no haya layout shift cuando Choices.js lo envuelve después. */
+select:not([data-no-choices]):not([data-choices-init]) {
+    background: #18181b;
+    border: 1px solid #27272a;
+    border-radius: 8px;
+    color: #fafafa;
+    padding: 6px 28px 6px 12px;
+    min-height: 36px;
+    font-size: 13px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    outline: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+}
+
+/* Matching de los selects especiales pre-init */
+select.filtro-select:not([data-choices-init]) {
+    min-width: 170px;
+}
+
+select.select-estado:not([data-choices-init]) {
+    min-width: 120px;
+    max-width: 140px;
+    padding: 4px 28px 4px 10px;
+    min-height: 28px;
+    font-size: 11px;
+    background-position: right 8px center;
+}
+
+/* Opciones del select nativo pre-init (en caso de que abra antes de Choices) */
+select:not([data-no-choices]):not([data-choices-init]) option {
+    background: #18181b;
+    color: #fafafa;
+}
+
+/* ─── Choices.js — tema oscuro premium ──────────────────────────────── */
+
+/* Contenedor exterior */
+.choices {
+    font-size: 13px;
+    margin-bottom: 0;
+}
+
+/* Inner — el "control" visible */
+.choices .choices__inner {
+    background: #18181b !important;
+    border: 1px solid #27272a !important;
+    border-radius: 8px !important;
+    color: #fafafa !important;
+    padding: 6px 12px !important;
+    min-height: 36px !important;
+    box-shadow: none !important;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.choices .choices__inner:hover {
+    border-color: #3f3f46 !important;
+}
+
+.choices.is-focused .choices__inner {
+    border-color: #22c55e !important;
+    box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.3) !important;
+}
+
+.choices.is-open .choices__inner {
+    border-color: #22c55e !important;
+    border-bottom-color: #27272a !important;
+    border-radius: 8px 8px 0 0 !important;
+    box-shadow: none !important;
+}
+
+/* Item seleccionado dentro del inner */
+.choices .choices__item--selectable,
+.choices .choices__item {
+    color: #fafafa !important;
+    font-size: 13px;
+}
+
+/* Placeholder */
+.choices .choices__placeholder {
+    color: #71717a !important;
+    opacity: 1;
+}
+
+/* Ocultar el input de búsqueda dentro del select single */
+.choices[data-type*="select-one"] .choices__input--cloned {
+    display: none !important;
+}
+
+/* ─── Dropdown ──────────────────────────────────────────────────────── */
+.choices .choices__list--dropdown,
+.choices .choices__list[aria-expanded] {
+    background: #18181b !important;
+    border: 1px solid #3f3f46 !important;
+    border-radius: 8px !important;
+    color: #fafafa !important;
+    margin-top: 4px !important;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5) !important;
+    overflow: hidden;
+    z-index: 9999;
+    word-break: normal;
+}
+
+/* Opciones del dropdown */
+.choices .choices__list--dropdown .choices__item,
+.choices .choices__list[aria-expanded] .choices__item {
+    padding: 8px 12px !important;
+    color: #fafafa !important;
+    cursor: pointer;
+    background: #18181b !important;
+    font-size: 13px;
+    transition: background 0.1s;
+}
+
+/* Hover / highlighted */
+.choices .choices__list--dropdown .choices__item--selectable.is-highlighted,
+.choices .choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
+    background: #27272a !important;
+    color: #fafafa !important;
+}
+
+/* Seleccionado */
+.choices .choices__list--dropdown .choices__item.is-selected {
+    background: rgba(34, 197, 94, 0.12) !important;
+    color: #22c55e !important;
+}
+
+/* Sin resultados */
+.choices .choices__list--dropdown .choices__item--disabled {
+    color: #71717a !important;
+    background: #18181b !important;
+}
+
+/* ─── Flecha personalizada ──────────────────────────────────────────── */
+.choices[data-type*="select-one"]::after {
+    content: "" !important;
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    width: 12px;
+    height: 12px;
+    transform: translateY(-50%);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat;
+    border: none !important;
+    margin-top: 0 !important;
+    transition: transform 0.2s;
+}
+
+.choices[data-type*="select-one"].is-open::after {
+    transform: translateY(-50%) rotate(180deg);
+    margin-top: 0 !important;
+    border: none !important;
+}
+
+/* ─── Deshabilitado ─────────────────────────────────────────────────── */
+.choices.is-disabled .choices__inner {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ─── Filtro de celular (resúmenes + clientes) ──────────────────────── */
+.choices.filtro-select {
+    min-width: 190px;
+}
+
+.choices.filtro-celular {
+    min-width: 180px;
+}
+
+/* Ícono SVG inline dentro de las opciones */
+.choices-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+    vertical-align: middle;
+    flex-shrink: 0;
+    opacity: 0.85;
+}
+
+.choices-icon svg {
+    display: block;
+}
+
+/* ─── Select de estado (tabla usuarios) ─────────────────────────────── */
+.choices.choices--estado {
+    min-width: 120px;
+    max-width: 140px;
+    font-size: 11px;
+}
+
+.choices.choices--estado .choices__inner {
+    padding: 4px 28px 4px 10px !important;
+    min-height: 28px !important;
+    font-size: 11px;
+}
+
+.choices.choices--estado::after {
+    right: 8px;
+    width: 10px;
+    height: 10px;
+}
+
+.choices.choices--estado .choices__list--dropdown {
+    min-width: 140px;
+}
+
+/* ─── Punto de color para estados ───────────────────────────────────── */
+.choices-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
+/* Colores por estado */
+.choices-dot[data-status="libre"]   { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+.choices-dot[data-status="ocupado"] { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+.choices-dot[data-status="pausa"]   { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
+.choices-dot[data-status="ausente"] { background: #a1a1aa; box-shadow: 0 0 6px #a1a1aa; }
+
+/* Texto coloreado por estado — opciones del dropdown */
+.choices .choices__item[data-status="libre"]   { color: #22c55e !important; }
+.choices .choices__item[data-status="ocupado"] { color: #ef4444 !important; }
+.choices .choices__item[data-status="pausa"]   { color: #f59e0b !important; }
+.choices .choices__item[data-status="ausente"] { color: #a1a1aa !important; }
+
+/* Hover con tinte de color del estado */
+.choices .choices__list--dropdown .choices__item[data-status="libre"].is-highlighted   { background: rgba(34, 197, 94, 0.12) !important; }
+.choices .choices__list--dropdown .choices__item[data-status="ocupado"].is-highlighted { background: rgba(239, 68, 68, 0.12) !important; }
+.choices .choices__list--dropdown .choices__item[data-status="pausa"].is-highlighted   { background: rgba(245, 158, 11, 0.12) !important; }
+.choices .choices__list--dropdown .choices__item[data-status="ausente"].is-highlighted { background: rgba(161, 161, 170, 0.12) !important; }

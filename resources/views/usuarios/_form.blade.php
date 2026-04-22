@@ -21,9 +21,7 @@
         <label style="display:block; font-size:11px; font-weight:600; color:#71717a; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px;">
             Rol <span style="color:#ef4444;">*</span>
         </label>
-        <select name="role" required
-                style="width:100%; background:#27272a; border:1px solid #3f3f46; border-radius:7px; padding:8px 12px; font-size:13px; color:#fafafa; outline:none; cursor:pointer;"
-                onfocus="this.style.borderColor='#71717a'" onblur="this.style.borderColor='#3f3f46'">
+        <select name="role" required style="width:100%;">
             <option value="empleado" {{ old('role', 'empleado') === 'empleado' ? 'selected' : '' }}>Empleado</option>
             <option value="turnero"  {{ old('role') === 'turnero'  ? 'selected' : '' }}>Turnero (solo box y TV)</option>
         </select>
