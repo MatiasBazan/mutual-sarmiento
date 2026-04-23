@@ -4,12 +4,13 @@ namespace App\Jobs;
 
 use App\Events\ResumenProgreso;
 use App\Models\Resumen;
+use App\Services\WhatsAppService;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -19,131 +20,92 @@ class EnviarResumenJob implements ShouldQueue
 
     public int $tries = 3;
     public int $timeout = 60;
-    public array $backoff = [30, 60, 120];
+    public int $backoff = 60;
 
     public function __construct(
         public int $resumenId,
     ) {}
 
-    public function handle(): void
+    public function handle(WhatsAppService $whatsapp): void
     {
         $resumen = Resumen::with('cliente')->findOrFail($this->resumenId);
         $cliente = $resumen->cliente;
 
-        // Marcar como enviando
         $resumen->update(['estado' => Resumen::ENVIANDO, 'intentos' => $resumen->intentos + 1]);
-
         $this->broadcast($resumen, Resumen::ENVIANDO);
 
-        try {
-            $this->enviarWhatsApp($cliente->celular, $resumen->pdf_path);
-
-            // Borrar PDF del disco público
-            if ($resumen->pdf_path && Storage::exists($resumen->pdf_path)) {
-                Storage::delete($resumen->pdf_path);
-            }
-
-            $resumen->update([
-                'estado'     => Resumen::NOTIFICADO,
-                'enviado_at' => now(),
-                'pdf_path'   => null,
-            ]);
-
-            $this->broadcast($resumen, Resumen::NOTIFICADO);
-        } catch (\Throwable $e) {
-            Log::error("Error enviando resumen {$this->resumenId}: " . preg_replace('/\+?\d{7,}/', '[PHONE]', $e->getMessage()));
-            $resumen->update(['estado' => Resumen::ERROR]);
-            $this->broadcast($resumen, Resumen::ERROR);
-        }
-    }
-
-    private function enviarWhatsApp(string $celular, string $pdfPath): void
-    {
-        $instanceId  = config('services.zapi.instance_id');
-        $token       = config('services.zapi.token');
-        $clientToken = config('services.zapi.client_token');
-        $numero      = $this->normalizarCelular($celular);
-
-        $fullPath = storage_path('app/private/' . $pdfPath);
+        $fullPath = storage_path('app/private/' . $resumen->pdf_path);
         if (!file_exists($fullPath)) {
-            $fullPath = storage_path('app/' . $pdfPath);
+            $fullPath = storage_path('app/' . $resumen->pdf_path);
         }
         if (!file_exists($fullPath)) {
-            throw new \Exception('PDF no encontrado en: ' . $fullPath);
+            Log::error("PDF no encontrado para resumen {$this->resumenId}", ['path' => $resumen->pdf_path]);
+            throw new \Exception('PDF no encontrado');
         }
 
-        $nombreArchivo = 'resumen_' . now()->format('Y-m') . '.pdf';
-
-        // Copiar al disco público para que Z-API pueda acceder por URL
-        $nombrePublico = 'temp/' . basename($pdfPath);
+        // Copiar a disco público para que Meta pueda descargarlo via URL
+        $nombrePublico = 'temp/' . basename($resumen->pdf_path);
         Storage::disk('public')->put($nombrePublico, file_get_contents($fullPath));
         $pdfUrl = Storage::disk('public')->url($nombrePublico);
 
-        Log::info('Enviando PDF via URL', [
-            'path'    => $pdfPath,
-            'url'     => $pdfUrl,
-            'size'    => filesize($fullPath),
-            'numero'  => $numero,
-        ]);
-
-        $headers = ['Content-Type' => 'application/json'];
-        if (!empty($clientToken)) {
-            $headers['Client-Token'] = $clientToken;
-        }
+        $filename         = 'resumen_' . $resumen->periodo . '.pdf';
+        $periodoLegible   = $this->formatearPeriodo($resumen->periodo);
+        $fechaVencimiento = $this->calcularFechaVencimiento($resumen->periodo);
 
         try {
-            $response = Http::withHeaders($headers)
-                ->when(app()->environment('local'), fn($h) => $h->withoutVerifying())
-                ->post("https://api.z-api.io/instances/{$instanceId}/token/{$token}/send-document/pdf", [
-                    'phone'    => $numero,
-                    'document' => $pdfUrl,
-                    'fileName' => $nombreArchivo,
-                    'caption'  => 'Mutual Club Sarmiento — Su resumen mensual adjunto.',
-                ]);
+            $ok = $whatsapp->enviarTemplateResumen(
+                celular:          $cliente->celular,
+                pdfUrl:           $pdfUrl,
+                nombreCliente:    $cliente->nombre_completo,
+                periodo:          $periodoLegible,
+                fechaVencimiento: $fechaVencimiento,
+                filename:         $filename,
+            );
         } finally {
-            // Borrar temp independientemente de éxito o error
             Storage::disk('public')->delete($nombrePublico);
-            Log::info('Archivo temporal borrado', ['path' => $nombrePublico]);
         }
 
-        Log::info('Z-API respuesta', [
-            'status' => $response->status(),
-            'body'   => $response->body(),
-            'ok'     => $response->successful(),
+        if (!$ok) {
+            throw new \Exception('Envío WhatsApp falló — ver logs.');
+        }
+
+        if ($resumen->pdf_path && Storage::exists($resumen->pdf_path)) {
+            Storage::delete($resumen->pdf_path);
+        }
+
+        $resumen->update([
+            'estado'     => Resumen::NOTIFICADO,
+            'enviado_at' => now(),
+            'pdf_path'   => null,
         ]);
 
-        if (!$response->successful()) {
-            throw new \Exception('Z-API error: ' . $response->body());
-        }
-
-        Log::info('Z-API envío exitoso', ['numero' => $numero]);
+        $this->broadcast($resumen, Resumen::NOTIFICADO);
     }
 
-    private function normalizarCelular(string $celular): string
+    private function formatearPeriodo(string $periodo): string
     {
-        $numero = preg_replace('/\D/', '', $celular);
-
-        // Ya tiene 549 → correcto
-        if (str_starts_with($numero, '549')) {
-            return $numero;
+        try {
+            return Carbon::createFromFormat('Y-m', $periodo)
+                ->locale('es')
+                ->isoFormat('MMMM YYYY');
+        } catch (\Throwable) {
+            return $periodo;
         }
+    }
 
-        // Tiene 54 sin el 9 de celular → insertar 9
-        if (str_starts_with($numero, '54')) {
-            return '549' . substr($numero, 2);
+    /**
+     * Vencimiento estándar: día 10 del mes siguiente al período.
+     */
+    private function calcularFechaVencimiento(string $periodo): string
+    {
+        try {
+            return Carbon::createFromFormat('Y-m', $periodo)
+                ->addMonthNoOverflow()
+                ->day(10)
+                ->format('d/m/Y');
+        } catch (\Throwable) {
+            return now()->addMonth()->day(10)->format('d/m/Y');
         }
-
-        // Con 0 inicial → quitar
-        if (str_starts_with($numero, '0')) {
-            $numero = substr($numero, 1);
-        }
-
-        // Con 15 inicial → quitar
-        if (str_starts_with($numero, '15')) {
-            $numero = substr($numero, 2);
-        }
-
-        return '549' . $numero;
     }
 
     private function broadcast(Resumen $resumen, string $estado): void
