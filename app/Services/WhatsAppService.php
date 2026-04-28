@@ -7,59 +7,6 @@ use Illuminate\Support\Facades\Log;
 
 class WhatsAppService
 {
-    public function enviarPDF(string $celular, string $pdfUrl, string $caption, string $filename = 'resumen.pdf'): bool
-    {
-        $token   = config('services.whatsapp.token');
-        $phoneId = config('services.whatsapp.phone_id');
-        $version = config('services.whatsapp.version', 'v25.0');
-
-        if (empty($token) || empty($phoneId)) {
-            Log::error('WhatsApp credenciales faltantes (token/phone_id).');
-            return false;
-        }
-
-        $numero = $this->normalizarCelular($celular);
-        $url    = "https://graph.facebook.com/{$version}/{$phoneId}/messages";
-
-        try {
-            $response = Http::withToken($token)
-                ->when(app()->environment('local'), fn($h) => $h->withoutVerifying())
-                ->acceptJson()
-                ->post($url, [
-                    'messaging_product' => 'whatsapp',
-                    'recipient_type'    => 'individual',
-                    'to'                => $numero,
-                    'type'              => 'document',
-                    'document'          => [
-                        'link'     => $pdfUrl,
-                        'filename' => $filename,
-                        'caption'  => $caption,
-                    ],
-                ]);
-
-            if (!$response->successful()) {
-                Log::error('WhatsApp Cloud API error', [
-                    'status' => $response->status(),
-                    'body'   => $response->body(),
-                    'numero' => $numero,
-                ]);
-                return false;
-            }
-
-            Log::info('WhatsApp envío exitoso', [
-                'numero'   => $numero,
-                'msg_id'   => data_get($response->json(), 'messages.0.id'),
-            ]);
-
-            return true;
-        } catch (\Throwable $e) {
-            Log::error('WhatsApp excepción: ' . $e->getMessage(), [
-                'numero' => $numero ?? null,
-            ]);
-            return false;
-        }
-    }
-
     /**
      * Envía el template "resumen_mensual" aprobado en Meta.
      * Header: PDF como document. Body: nombre, período, fecha vencimiento.

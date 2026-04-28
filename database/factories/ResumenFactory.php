@@ -40,9 +40,4 @@ class ResumenFactory extends Factory
     {
         return $this->state(['estado' => Resumen::ERROR]);
     }
-
-    public function sinCelular(): static
-    {
-        return $this->state(['estado' => Resumen::SIN_CELULAR]);
-    }
 }

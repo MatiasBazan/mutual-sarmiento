@@ -584,11 +584,10 @@ function resumenes() {
         },
 
         _badgeColors: {
-            pendiente:   { bg: 'rgba(245,158,11,0.1)',  color: '#f59e0b', border: 'rgba(245,158,11,0.2)' },
-            enviando:    { bg: 'rgba(96,165,250,0.1)',  color: '#60a5fa', border: 'rgba(96,165,250,0.2)' },
-            notificado:  { bg: 'rgba(34,197,94,0.1)',   color: '#22c55e', border: 'rgba(34,197,94,0.2)' },
-            error:       { bg: 'rgba(239,68,68,0.1)',   color: '#ef4444', border: 'rgba(239,68,68,0.2)' },
-            sin_celular: { bg: 'rgba(107,114,128,0.1)', color: '#6b7280', border: 'rgba(107,114,128,0.2)' },
+            pendiente:   { bg: 'rgba(245,158,11,0.1)', color: '#f59e0b', border: 'rgba(245,158,11,0.2)' },
+            enviando:    { bg: 'rgba(96,165,250,0.1)', color: '#60a5fa', border: 'rgba(96,165,250,0.2)' },
+            notificado:  { bg: 'rgba(34,197,94,0.1)',  color: '#22c55e', border: 'rgba(34,197,94,0.2)' },
+            error:       { bg: 'rgba(239,68,68,0.1)',  color: '#ef4444', border: 'rgba(239,68,68,0.2)' },
         },
 
         _envioTimeout: null,
@@ -608,7 +607,7 @@ function resumenes() {
                     if (badge) {
                         const label = badge.querySelector('[data-label]');
                         if (label) label.textContent = data.estado;
-                        const c = this._badgeColors[data.estado] ?? this._badgeColors['sin_celular'];
+                        const c = this._badgeColors[data.estado] ?? this._badgeColors['pendiente'];
                         badge.style.background  = c.bg;
                         badge.style.color       = c.color;
                         badge.style.borderColor = c.border;

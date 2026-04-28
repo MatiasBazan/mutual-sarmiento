@@ -28,11 +28,10 @@ class Resumen extends Model
     }
 
     // Estados
-    const PENDIENTE   = 'pendiente';
-    const ENVIANDO    = 'enviando';
-    const NOTIFICADO  = 'notificado';
-    const ERROR       = 'error';
-    const SIN_CELULAR = 'sin_celular';
+    const PENDIENTE  = 'pendiente';
+    const ENVIANDO   = 'enviando';
+    const NOTIFICADO = 'notificado';
+    const ERROR      = 'error';
 
     public function cliente(): BelongsTo
     {
