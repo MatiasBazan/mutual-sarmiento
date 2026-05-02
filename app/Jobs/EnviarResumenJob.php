@@ -48,18 +48,16 @@ class EnviarResumenJob implements ShouldQueue
         Storage::disk('public')->put($nombrePublico, file_get_contents($fullPath));
         $pdfUrl = Storage::disk('public')->url($nombrePublico);
 
-        $filename         = 'resumen_' . $resumen->periodo . '.pdf';
         $periodoLegible   = $this->formatearPeriodo($resumen->periodo);
         $fechaVencimiento = $this->calcularFechaVencimiento($resumen->periodo);
 
         try {
-            $ok = $whatsapp->enviarTemplateResumen(
-                celular:          $cliente->celular,
+            $ok = $whatsapp->sendDocument(
+                telefono:         $cliente->celular,
                 pdfUrl:           $pdfUrl,
-                nombreCliente:    $cliente->nombre_completo,
+                nombre:           $cliente->nombre_completo,
                 periodo:          $periodoLegible,
                 fechaVencimiento: $fechaVencimiento,
-                filename:         $filename,
             );
         } finally {
             Storage::disk('public')->delete($nombrePublico);
