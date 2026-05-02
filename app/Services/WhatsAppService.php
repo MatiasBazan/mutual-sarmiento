@@ -22,7 +22,7 @@ class WhatsAppService
         string $languageCode = 'es_AR'
     ): bool {
         $token   = config('services.whatsapp.token');
-        $phoneId = config('services.whatsapp.phone_id');
+        $phoneId = config('services.whatsapp.phone_number_id');
         $version = config('services.whatsapp.version', 'v25.0');
 
         if (empty($token) || empty($phoneId)) {

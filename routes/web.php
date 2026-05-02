@@ -103,7 +103,7 @@ Route::get('/test-wpp', function (WhatsAppService $whatsapp) {
 
     $numero  = $whatsapp->normalizarCelular($resumen->cliente->celular);
     $token   = config('services.whatsapp.token');
-    $phoneId = config('services.whatsapp.phone_id');
+    $phoneId = config('services.whatsapp.phone_number_id');
     $version = config('services.whatsapp.version', 'v25.0');
 
     if (empty($token) || empty($phoneId)) {
