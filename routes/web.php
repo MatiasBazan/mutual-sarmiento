@@ -7,7 +7,11 @@ use App\Http\Controllers\ResumenController;
 use App\Http\Controllers\TurneroController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WhatsAppWebhookController;
+use App\Models\Resumen;
+use App\Services\WhatsAppService;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 // Redirigir raíz según rol
 Route::get('/', function () {
@@ -64,6 +68,75 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/usuarios/{usuario}', [UserController::class, 'destroy'])->name('usuarios.destroy');
         Route::patch('/admin/usuarios/{usuario}/estado', [AdminBoxController::class, 'updateEstado'])->name('admin.usuarios.estado');
     });
+});
+
+// Ruta temporal de prueba WhatsApp — SOLO local
+Route::get('/test-wpp', function (WhatsAppService $whatsapp) {
+    abort_unless(app()->environment('local'), 403, 'Solo disponible en local.');
+
+    $resumen = Resumen::with('cliente')
+        ->where('estado', Resumen::PENDIENTE)
+        ->orderBy('id')
+        ->first();
+
+    if (!$resumen) {
+        return response()->json(['ok' => false, 'error' => 'No hay resúmenes pendientes. Corré el seeder primero.'], 404);
+    }
+
+    if (!$resumen->cliente->celular) {
+        return response()->json(['ok' => false, 'error' => 'Cliente sin celular.'], 422);
+    }
+
+    if (!Storage::disk('public')->exists($resumen->pdf_path)) {
+        return response()->json([
+            'ok'    => false,
+            'error' => 'PDF no encontrado en disco public.',
+            'path'  => $resumen->pdf_path,
+        ], 404);
+    }
+
+    $pdfUrl   = Storage::disk('public')->url($resumen->pdf_path);
+    $filename = 'resumen_' . $resumen->periodo . '.pdf';
+    $caption  = "Hola {$resumen->cliente->nombre_completo}, te enviamos tu resumen mensual "
+              . "correspondiente al período {$resumen->periodo}. "
+              . "Ante cualquier consulta, comunicate con nosotros.";
+
+    $numero  = $whatsapp->normalizarCelular($resumen->cliente->celular);
+    $token   = config('services.whatsapp.token');
+    $phoneId = config('services.whatsapp.phone_id');
+    $version = config('services.whatsapp.version', 'v25.0');
+
+    if (empty($token) || empty($phoneId)) {
+        return response()->json(['ok' => false, 'error' => 'Faltan WHATSAPP_TOKEN o WHATSAPP_PHONE_ID en .env'], 500);
+    }
+
+    $endpoint = "https://graph.facebook.com/{$version}/{$phoneId}/messages";
+
+    $response = Http::withToken($token)
+        ->withoutVerifying()
+        ->acceptJson()
+        ->post($endpoint, [
+            'messaging_product' => 'whatsapp',
+            'recipient_type'    => 'individual',
+            'to'                => $numero,
+            'type'              => 'document',
+            'document'          => [
+                'link'     => $pdfUrl,
+                'filename' => $filename,
+                'caption'  => $caption,
+            ],
+        ]);
+
+    return response()->json([
+        'ok'           => $response->successful(),
+        'resumen_id'   => $resumen->id,
+        'cliente'      => $resumen->cliente->nombre_completo,
+        'numero'       => $numero,
+        'pdf_url'      => $pdfUrl,
+        'endpoint'     => $endpoint,
+        'http_status'  => $response->status(),
+        'meta_response'=> $response->json() ?? $response->body(),
+    ], $response->successful() ? 200 : 500, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 });
 
 require __DIR__.'/auth.php';

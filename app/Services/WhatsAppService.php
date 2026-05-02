@@ -4,91 +4,100 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 class WhatsAppService
 {
-    private string $token;
-    private string $phoneNumberId;
-
-    public function __construct()
-    {
-        $this->token         = config('services.whatsapp.token');
-        $this->phoneNumberId = config('services.whatsapp.phone_number_id');
-    }
-
     /**
-     * Envía un PDF como documento usando la plantilla "resumen_mensual" de Meta.
-     * El PDF debe existir en storage (local o private). Se copia temporalmente
-     * al disco público para que Meta pueda descargarlo via URL, y se borra al finalizar.
+     * Envía el template "resumen_mensual" aprobado en Meta.
+     * Header: PDF como document. Body: nombre, período, fecha vencimiento.
      */
-    public function sendDocument(string $celular, string $pdfPath, string $fileName): void
-    {
-        $numero   = $this->normalizarCelular($celular);
-        $fullPath = $this->resolverRutaPdf($pdfPath);
+    public function enviarTemplateResumen(
+        string $celular,
+        string $pdfUrl,
+        string $nombreCliente,
+        string $periodo,
+        string $fechaVencimiento = '',
+        string $filename = 'resumen_mensual.pdf',
+        string $templateName = 'resumen_mensual',
+        string $languageCode = 'es_AR'
+    ): bool {
+        $token   = config('services.whatsapp.token');
+        $phoneId = config('services.whatsapp.phone_id');
+        $version = config('services.whatsapp.version', 'v25.0');
 
-        $nombrePublico = 'temp/' . basename($pdfPath);
-        Storage::disk('public')->put($nombrePublico, file_get_contents($fullPath));
-        $pdfUrl = Storage::disk('public')->url($nombrePublico);
+        if (empty($token) || empty($phoneId)) {
+            Log::error('WhatsApp credenciales faltantes (token/phone_id).');
+            return false;
+        }
 
-        Log::info('Enviando PDF via Meta WhatsApp Cloud API', [
-            'numero'   => preg_replace('/\d{4}$/', '****', $numero),
-            'fileName' => $fileName,
-            'size'     => filesize($fullPath),
-        ]);
+        $numero = $this->normalizarCelular($celular);
+        $url    = "https://graph.facebook.com/{$version}/{$phoneId}/messages";
 
-        try {
-            $response = Http::withToken($this->token)
-                ->post("https://graph.facebook.com/v19.0/{$this->phoneNumberId}/messages", [
-                    'messaging_product' => 'whatsapp',
-                    'to'                => $numero,
-                    'type'              => 'template',
-                    'template'          => [
-                        'name'       => 'resumen_mensual',
-                        'language'   => ['code' => 'es_AR'],
-                        'components' => [
+        $payload = [
+            'messaging_product' => 'whatsapp',
+            'to'                => $numero,
+            'type'              => 'template',
+            'template' => [
+                'name'     => $templateName,
+                'language' => ['code' => $languageCode],
+                'components' => [
+                    [
+                        'type' => 'header',
+                        'parameters' => [
                             [
-                                'type'       => 'header',
-                                'parameters' => [
-                                    [
-                                        'type'     => 'document',
-                                        'document' => [
-                                            'link'     => $pdfUrl,
-                                            'filename' => $fileName,
-                                        ],
-                                    ],
+                                'type' => 'document',
+                                'document' => [
+                                    'link'     => $pdfUrl,
+                                    'filename' => $filename,
                                 ],
                             ],
                         ],
                     ],
+                    [
+                        'type' => 'body',
+                        'parameters' => [
+                            ['type' => 'text', 'text' => $nombreCliente],
+                            ['type' => 'text', 'text' => $periodo],
+                            ['type' => 'text', 'text' => $fechaVencimiento],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        try {
+            $response = Http::withToken($token)
+                ->when(app()->environment('local'), fn($h) => $h->withoutVerifying())
+                ->acceptJson()
+                ->post($url, $payload);
+
+            if (!$response->successful()) {
+                Log::error('WhatsApp template error', [
+                    'status'   => $response->status(),
+                    'body'     => $response->body(),
+                    'numero'   => $numero,
+                    'template' => $templateName,
                 ]);
-        } finally {
-            Storage::disk('public')->delete($nombrePublico);
-        }
-
-        Log::info('Meta WhatsApp respuesta', [
-            'status' => $response->status(),
-            'body'   => $response->body(),
-        ]);
-
-        if (!$response->successful()) {
-            throw new \Exception('Meta WhatsApp error ' . $response->status() . ': ' . $response->body());
-        }
-    }
-
-    private function resolverRutaPdf(string $pdfPath): string
-    {
-        foreach (['app/private/', 'app/'] as $base) {
-            $path = storage_path($base . $pdfPath);
-            if (file_exists($path)) {
-                return $path;
+                return false;
             }
-        }
 
-        throw new \Exception('PDF no encontrado: ' . $pdfPath);
+            Log::info('WhatsApp template enviado', [
+                'numero'   => $numero,
+                'template' => $templateName,
+                'msg_id'   => data_get($response->json(), 'messages.0.id'),
+            ]);
+
+            return true;
+        } catch (\Throwable $e) {
+            Log::error('WhatsApp template excepción: ' . $e->getMessage(), [
+                'numero'   => $numero ?? null,
+                'template' => $templateName,
+            ]);
+            return false;
+        }
     }
 
-    private function normalizarCelular(string $celular): string
+    public function normalizarCelular(string $celular): string
     {
         $numero = preg_replace('/\D/', '', $celular);
 
