@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResumenController;
 use App\Http\Controllers\TurneroController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WhatsAppWebhookController;
 use Illuminate\Support\Facades\Route;
 
 // Redirigir raíz según rol
@@ -21,6 +22,10 @@ Route::get('/', function () {
 
 // Pantalla TV — pública, sin login
 Route::get('/tv', [TurneroController::class, 'tv'])->name('turnero.tv');
+
+// Webhook de Meta WhatsApp — público, sin CSRF (Meta no envía token)
+Route::get('/webhook/whatsapp', [WhatsAppWebhookController::class, 'verify'])->name('webhook.whatsapp.verify');
+Route::post('/webhook/whatsapp', [WhatsAppWebhookController::class, 'handle'])->name('webhook.whatsapp.handle');
 
 // Rutas autenticadas
 Route::middleware(['auth'])->group(function () {

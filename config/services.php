@@ -41,4 +41,11 @@ return [
         'client_token' => env('ZAPI_CLIENT_TOKEN', ''),
     ],
 
+    'whatsapp' => [
+        'token'           => env('WHATSAPP_TOKEN'),
+        'phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID'),
+        'waba_id'         => env('WHATSAPP_WABA_ID'),
+        'verify_token'    => env('WHATSAPP_VERIFY_TOKEN'),
+    ],
+
 ];

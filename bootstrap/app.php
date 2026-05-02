@@ -15,6 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin'       => \App\Http\Middleware\EsAdmin::class,
             'no-turnero'  => \App\Http\Middleware\NoEsTurnero::class,
         ]);
+
+        $middleware->validateCsrfTokens(except: [
+            '/webhook/whatsapp',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
