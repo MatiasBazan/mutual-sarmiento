@@ -33,20 +33,31 @@ class WhatsAppWebhookController extends Controller
     {
         $payload = $request->all();
 
-        Log::info('WhatsApp webhook recibido', ['payload' => $payload]);
+        Log::info('WhatsApp webhook recibido', ['payload' => json_decode(json_encode($payload), true)]);
 
         // Delivery status updates
         foreach ($payload['entry'] ?? [] as $entry) {
             foreach ($entry['changes'] ?? [] as $change) {
-                $value = $change['value'] ?? [];
+                $value    = $change['value'] ?? [];
+                $statuses = $value['statuses'] ?? [];
 
-                foreach ($value['statuses'] ?? [] as $status) {
+                foreach ($statuses as $status) {
                     Log::info('WhatsApp delivery status', [
-                        'message_id' => $status['id']      ?? null,
-                        'status'     => $status['status']  ?? null,
+                        'message_id' => $status['id']        ?? null,
+                        'status'     => $status['status']    ?? null,
                         'recipient'  => preg_replace('/\d{4}$/', '****', $status['recipient_id'] ?? ''),
                         'timestamp'  => $status['timestamp'] ?? null,
                     ]);
+                }
+
+                foreach ($statuses as $status) {
+                    if (isset($status['errors'])) {
+                        Log::error('WhatsApp delivery error detalle', [
+                            'errors'    => $status['errors'],
+                            'status'    => $status['status'],
+                            'recipient' => $status['recipient_id'] ?? '?',
+                        ]);
+                    }
                 }
             }
         }
