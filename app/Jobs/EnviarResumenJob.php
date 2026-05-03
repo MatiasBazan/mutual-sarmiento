@@ -44,6 +44,16 @@ class EnviarResumenJob implements ShouldQueue
             throw new \Exception('PDF no encontrado');
         }
 
+        Log::info("EnviarResumenJob: datos del resumen antes de URL firmada", [
+            'resumen_id' => $resumen->id,
+            'pdf_path'   => $resumen->pdf_path,
+            'storage_exists' => Storage::exists($resumen->pdf_path),
+            'full_path_private' => storage_path('app/private/' . $resumen->pdf_path),
+            'full_path_private_exists' => file_exists(storage_path('app/private/' . $resumen->pdf_path)),
+            'full_path_local' => storage_path('app/' . $resumen->pdf_path),
+            'full_path_local_exists' => file_exists(storage_path('app/' . $resumen->pdf_path)),
+        ]);
+
         $pdfUrl = URL::temporarySignedRoute(
             'resumen.download',
             now()->addMinutes(10),
