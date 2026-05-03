@@ -78,15 +78,23 @@ class EnviarResumenJob implements ShouldQueue
             throw new \Exception('Envío WhatsApp falló — ver logs.');
         }
 
-        if ($resumen->pdf_path && Storage::exists($resumen->pdf_path)) {
-            Storage::delete($resumen->pdf_path);
-        }
-
+        // Marcar como notificado pero conservar pdf_path hasta que el PDF sea borrado.
         $resumen->update([
             'estado'     => Resumen::NOTIFICADO,
             'enviado_at' => now(),
-            'pdf_path'   => null,
         ]);
+
+        // El PDF se borra 30 minutos después para que Meta tenga tiempo de descargarlo.
+        // La URL firmada expira a los 10 min; 30 min da margen suficiente.
+        // Recién ahí se nula pdf_path en DB.
+        $resumenId = $resumen->id;
+        $pdfPath   = $resumen->pdf_path;
+        dispatch(static function () use ($resumenId, $pdfPath) {
+            if ($pdfPath && Storage::exists($pdfPath)) {
+                Storage::delete($pdfPath);
+            }
+            Resumen::where('id', $resumenId)->update(['pdf_path' => null]);
+        })->delay(now()->addMinutes(30));
 
         $this->broadcast($resumen, Resumen::NOTIFICADO);
     }
