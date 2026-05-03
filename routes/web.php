@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminBoxController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResumenController;
+use App\Http\Controllers\ResumenDownloadController;
 use App\Http\Controllers\TurneroController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WhatsAppWebhookController;
@@ -30,6 +31,11 @@ Route::get('/tv', [TurneroController::class, 'tv'])->name('turnero.tv');
 // Webhook de Meta WhatsApp — público, sin CSRF (Meta no envía token)
 Route::get('/webhook/whatsapp', [WhatsAppWebhookController::class, 'verify'])->name('webhook.whatsapp.verify');
 Route::post('/webhook/whatsapp', [WhatsAppWebhookController::class, 'handle'])->name('webhook.whatsapp.handle');
+
+// Descarga temporal de resúmenes — URL firmada, sin autenticación, accesible por Meta
+Route::get('/resumen/download/{resumen}', [ResumenDownloadController::class, 'download'])
+    ->middleware('signed')
+    ->name('resumen.download');
 
 // Rutas autenticadas
 Route::middleware(['auth'])->group(function () {

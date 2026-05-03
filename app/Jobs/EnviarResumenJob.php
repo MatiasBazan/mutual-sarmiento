@@ -13,6 +13,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class EnviarResumenJob implements ShouldQueue
 {
@@ -43,25 +44,22 @@ class EnviarResumenJob implements ShouldQueue
             throw new \Exception('PDF no encontrado');
         }
 
-        // Copiar a disco público para que Meta pueda descargarlo via URL
-        $nombrePublico = 'temp/' . basename($resumen->pdf_path);
-        Storage::disk('public')->put($nombrePublico, file_get_contents($fullPath));
-        $pdfUrl = Storage::disk('public')->url($nombrePublico);
+        $pdfUrl = URL::temporarySignedRoute(
+            'resumen.download',
+            now()->addMinutes(10),
+            ['resumen' => $resumen->id],
+        );
 
         $periodoLegible   = $this->formatearPeriodo($resumen->periodo);
         $fechaVencimiento = $this->calcularFechaVencimiento($resumen->periodo);
 
-        try {
-            $ok = $whatsapp->sendDocument(
-                telefono:         $cliente->celular,
-                pdfUrl:           $pdfUrl,
-                nombre:           $cliente->nombre_completo,
-                periodo:          $periodoLegible,
-                fechaVencimiento: $fechaVencimiento,
-            );
-        } finally {
-            Storage::disk('public')->delete($nombrePublico);
-        }
+        $ok = $whatsapp->sendDocument(
+            telefono:         $cliente->celular,
+            pdfUrl:           $pdfUrl,
+            nombre:           $cliente->nombre_completo,
+            periodo:          $periodoLegible,
+            fechaVencimiento: $fechaVencimiento,
+        );
 
         if (!$ok) {
             Log::error("Error enviando resumen {$this->resumenId}: WhatsApp devolvió false");
