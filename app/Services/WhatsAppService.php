@@ -87,24 +87,27 @@ class WhatsAppService
 
     public function normalizarCelular(string $celular): string
     {
+        // 1. Eliminar espacios, guiones, paréntesis y cualquier no-dígito
         $numero = preg_replace('/\D/', '', $celular);
 
-        if (str_starts_with($numero, '549')) {
-            return '+' . $numero;
-        }
-
-        if (str_starts_with($numero, '54')) {
-            return '+549' . substr($numero, 2);
-        }
-
+        // 2. Eliminar 0 inicial
         if (str_starts_with($numero, '0')) {
             $numero = substr($numero, 1);
         }
 
-        if (str_starts_with($numero, '15')) {
-            $numero = substr($numero, 2);
+        // 3. Agregar prefijo 549 si no lo tiene
+        if (!str_starts_with($numero, '549')) {
+            $numero = '549' . $numero;
         }
 
-        return '+549' . $numero;
+        // 4. Agregar + al principio
+        $normalizado = '+' . $numero;
+
+        Log::info('WhatsApp normalizarCelular', [
+            'original'    => $celular,
+            'normalizado' => $normalizado,
+        ]);
+
+        return $normalizado;
     }
 }
