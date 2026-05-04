@@ -23,7 +23,9 @@
 
             {{-- Botón Importar --}}
             <a href="{{ route('resumenes.importar') }}"
-               style="display:flex; align-items:center; gap:8px; background:#27272a; border:1px solid #3f3f46; color:#fafafa; padding:8px 16px; border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; text-decoration:none;">
+               style="display:flex; align-items:center; gap:8px; background:transparent; border:1px solid rgba(34,197,94,0.4); color:#22c55e; padding:8px 16px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; text-decoration:none; transition:background-color 0.15s, border-color 0.15s;"
+               onmouseover="this.style.background='rgba(34,197,94,0.1)'; this.style.borderColor='#22c55e'"
+               onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(34,197,94,0.4)'">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                     <polyline points="17 8 12 3 7 8"/>
@@ -64,22 +66,22 @@
     </div>
 
     <!-- Stats -->
-    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px;">
-        <div style="background:#18181b; border:1px solid #27272a; border-radius:10px; padding:16px 20px;">
-            <p style="font-size:11px; color:#71717a; text-transform:uppercase; letter-spacing:0.05em; margin:0 0 4px;">Pendientes</p>
-            <p style="font-size:28px; font-weight:700; color:#fafafa; margin:0;">{{ $stats['pendiente'] ?? 0 }}</p>
+    <div style="display:flex; align-items:stretch; margin-bottom:24px; background:#18181b; border:1px solid #27272a; border-radius:10px; overflow:hidden; flex-wrap:wrap;">
+        <div style="display:flex; align-items:center; gap:10px; padding:14px 24px; flex:1; min-width:110px; border-right:1px solid #27272a;">
+            <span style="font-size:11px; color:#71717a; text-transform:uppercase; letter-spacing:0.06em; white-space:nowrap;">Pendientes</span>
+            <span style="font-size:22px; font-weight:700; color:#fafafa; line-height:1;">{{ $stats['pendiente'] ?? 0 }}</span>
         </div>
-        <div style="background:#18181b; border:1px solid #27272a; border-radius:10px; padding:16px 20px;">
-            <p style="font-size:11px; color:#71717a; text-transform:uppercase; letter-spacing:0.05em; margin:0 0 4px;">Enviando</p>
-            <p style="font-size:28px; font-weight:700; color:#60a5fa; margin:0;">{{ $stats['enviando'] ?? 0 }}</p>
+        <div style="display:flex; align-items:center; gap:10px; padding:14px 24px; flex:1; min-width:110px; border-right:1px solid #27272a;">
+            <span style="font-size:11px; color:#71717a; text-transform:uppercase; letter-spacing:0.06em; white-space:nowrap;">Enviando</span>
+            <span style="font-size:22px; font-weight:700; color:#60a5fa; line-height:1;">{{ $stats['enviando'] ?? 0 }}</span>
         </div>
-        <div style="background:#18181b; border:1px solid #27272a; border-radius:10px; padding:16px 20px;">
-            <p style="font-size:11px; color:#71717a; text-transform:uppercase; letter-spacing:0.05em; margin:0 0 4px;">Enviados</p>
-            <p style="font-size:28px; font-weight:700; color:#22c55e; margin:0;">{{ $stats['notificado'] ?? 0 }}</p>
+        <div style="display:flex; align-items:center; gap:10px; padding:14px 24px; flex:1; min-width:110px; border-right:1px solid #27272a;">
+            <span style="font-size:11px; color:#71717a; text-transform:uppercase; letter-spacing:0.06em; white-space:nowrap;">Enviados</span>
+            <span style="font-size:22px; font-weight:700; color:#22c55e; line-height:1;">{{ $stats['notificado'] ?? 0 }}</span>
         </div>
-        <div style="background:#18181b; border:1px solid #27272a; border-radius:10px; padding:16px 20px;">
-            <p style="font-size:11px; color:#71717a; text-transform:uppercase; letter-spacing:0.05em; margin:0 0 4px;">Errores</p>
-            <p style="font-size:28px; font-weight:700; color:#ef4444; margin:0;">{{ $stats['error'] ?? 0 }}</p>
+        <div style="display:flex; align-items:center; gap:10px; padding:14px 24px; flex:1; min-width:110px;">
+            <span style="font-size:11px; color:#71717a; text-transform:uppercase; letter-spacing:0.06em; white-space:nowrap;">Errores</span>
+            <span style="font-size:22px; font-weight:700; color:#ef4444; line-height:1;">{{ $stats['error'] ?? 0 }}</span>
         </div>
     </div>
 
@@ -138,33 +140,49 @@
                  style="position:absolute; left:12px; top:50%; transform:translateY(-50%); pointer-events:none;">
                 <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
-            <input type="text" name="q" value="{{ $q }}" placeholder="Buscar por nombre…"
+            <input type="text" name="q" id="inputBusqueda" value="{{ $q }}" placeholder="Buscar por nombre…"
                    autocomplete="off"
-                   style="width:100%; background:#18181b; border:1px solid #27272a; border-radius:8px; padding:8px 12px 8px 34px; font-size:13px; color:#fafafa; outline:none;"
-                   onfocus="this.style.borderColor='#3f3f46'" onblur="this.style.borderColor='#27272a'">
+                   style="width:100%; background:#18181b; border:1px solid #27272a; border-radius:8px; padding:8px 36px 8px 34px; font-size:13px; color:#fafafa; outline:none;"
+                   onfocus="this.style.borderColor='#3f3f46'" onblur="this.style.borderColor='#27272a'"
+                   oninput="document.getElementById('btnLimpiarBusqueda').style.display = this.value ? 'flex' : 'none'">
+            <button type="button"
+                    id="btnLimpiarBusqueda"
+                    onclick="document.getElementById('inputBusqueda').value=''; document.getElementById('filtrosForm').submit();"
+                    title="Limpiar búsqueda"
+                    aria-label="Limpiar búsqueda"
+                    style="display:{{ $q !== '' ? 'flex' : 'none' }}; position:absolute; right:8px; top:50%; transform:translateY(-50%);
+                           align-items:center; justify-content:center; width:22px; height:22px;
+                           background:transparent; border:none; border-radius:4px; padding:0;
+                           color:#71717a; cursor:pointer; transition:background-color 0.15s, color 0.15s;"
+                    onmouseover="this.style.background='#27272a'; this.style.color='#fafafa'"
+                    onmouseout="this.style.background='transparent'; this.style.color='#71717a'">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
         </div>
 
-        <select name="celular" class="filtro-select filtro-celular" onchange="document.getElementById('filtrosForm').submit()">
-            <option value="todos" @selected($celular === 'todos')>Todos los celulares</option>
+        <select name="celular" class="filtro-select filtro-celular"
+                onchange="document.getElementById('filtrosForm').submit()"
+                style="appearance:none; -webkit-appearance:none; -moz-appearance:none;
+                       background-color:#18181b; border:1px solid #27272a; border-radius:8px;
+                       padding:8px 32px 8px 12px; font-size:13px; color:#fafafa; outline:none;
+                       cursor:pointer; height:36px; min-width:140px;
+                       background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23a1a1aa%22 stroke-width=%222%22 stroke-linecap=%22round%22><polyline points=%226 9 12 15 18 9%22></polyline></svg>');
+                       background-repeat:no-repeat; background-position:right 10px center;
+                       transition:border-color 0.15s;"
+                onfocus="this.style.borderColor='#3f3f46'"
+                onblur="this.style.borderColor='#27272a'">
+            <option value="todos" @selected($celular === 'todos')>Todos</option>
             <option value="con"   @selected($celular === 'con')>Con celular</option>
             <option value="sin"   @selected($celular === 'sin')>Sin celular</option>
         </select>
 
-        @if($q !== '' || $celular !== 'todos')
-        <a href="{{ route('resumenes.index') }}"
-           style="display:inline-flex; align-items:center; gap:6px; padding:0 14px; height:36px; border:1px solid #27272a; border-radius:8px; font-size:12px; color:#a1a1aa; text-decoration:none; background:#18181b; white-space:nowrap; flex-shrink:0;"
-           onmouseover="this.style.borderColor='#ef4444'; this.style.color='#ef4444'"
-           onmouseout="this.style.borderColor='#27272a'; this.style.color='#a1a1aa'">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
-            Limpiar
-        </a>
-        @endif
     </form>
 
     <!-- Tabla -->
     <div style="background:#18181b; border:1px solid #27272a; border-radius:12px; overflow:hidden;">
+    <div style="overflow-x:auto; -webkit-overflow-scrolling:touch;">
         <table style="width:100%; border-collapse:collapse;">
             <thead>
                 <tr style="background:#27272a;">
@@ -210,11 +228,10 @@
                             {{-- Editar cliente --}}
                             <button type="button"
                                 title="Editar cliente"
+                                aria-label="Editar cliente"
                                 @click="abrirEditarCliente({{ $r->cliente->id }}, {{ Js::from($r->cliente->nombre_completo) }}, {{ Js::from($r->cliente->nro_socio ?? '') }}, {{ Js::from($r->cliente->celular ?? '') }}, {{ Js::from($r->cliente->direccion ?? '') }})"
-                                style="background:transparent; border:1px solid #3f3f46; color:#71717a; padding:6px; border-radius:6px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:all 0.15s;"
-                                onmouseover="this.style.borderColor='#71717a'; this.style.color='#fafafa'"
-                                onmouseout="this.style.borderColor='#3f3f46'; this.style.color='#71717a'">
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                class="btn-icon">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                                 </svg>
@@ -224,11 +241,10 @@
                             @if($r->estado !== 'notificado' && $r->cliente->celular)
                             <button type="button"
                                 title="Enviar este resumen"
+                                aria-label="Enviar este resumen"
                                 @click="enviarUno({{ $r->id }}, $event.currentTarget)"
-                                style="background:transparent; border:1px solid #3f3f46; color:#71717a; padding:6px; border-radius:6px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:all 0.15s;"
-                                onmouseover="this.style.borderColor='rgba(34,197,94,0.4)'; this.style.color='#22c55e'; this.style.background='rgba(34,197,94,0.08)'"
-                                onmouseout="this.style.borderColor='#3f3f46'; this.style.color='#71717a'; this.style.background='transparent'">
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                class="btn-icon btn-icon--send">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                                     <line x1="22" y1="2" x2="11" y2="13"/>
                                     <polygon points="22 2 15 22 11 13 2 9 22 2"/>
                                 </svg>
@@ -239,10 +255,9 @@
                             <a href="{{ route('resumenes.pdf', $r) }}"
                                target="_blank"
                                title="Ver PDF"
-                               style="display:inline-flex; align-items:center; justify-content:center; color:#71717a; padding:6px; border:1px solid #3f3f46; border-radius:6px; transition:all 0.15s;"
-                               onmouseover="this.style.borderColor='#71717a'; this.style.color='#fafafa'"
-                               onmouseout="this.style.borderColor='#3f3f46'; this.style.color='#71717a'">
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                               aria-label="Ver PDF"
+                               class="btn-icon">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
                                      stroke="currentColor" stroke-width="2"
                                      stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
@@ -254,10 +269,9 @@
                             <button
                                 onclick="confirmarEliminarResumen({{ $r->id }})"
                                 title="Eliminar resumen"
-                                style="background:transparent; border:1px solid #3f3f46; color:#71717a; padding:6px; border-radius:6px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:all 0.15s;"
-                                onmouseover="this.style.borderColor='rgba(239,68,68,0.4)'; this.style.color='#ef4444'; this.style.background='rgba(239,68,68,0.08)'"
-                                onmouseout="this.style.borderColor='#3f3f46'; this.style.color='#71717a'; this.style.background='transparent'">
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                                aria-label="Eliminar resumen"
+                                class="btn-icon btn-icon--danger">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
                                      stroke="currentColor" stroke-width="2" stroke-linecap="round">
                                     <polyline points="3 6 5 6 21 6"/>
                                     <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
@@ -278,6 +292,7 @@
                 @endforelse
             </tbody>
         </table>
+    </div>
         <div style="padding:12px 20px; border-top:1px solid #27272a;">
             {{ $resumenes->links() }}
         </div>

@@ -101,6 +101,7 @@
                 <button
                     type="submit"
                     x-show="archivos.length > 0 && !cargando"
+                    x-cloak
                     style="display:block; width:100%; padding:12px 24px; background:#22c55e; color:#000; font-weight:700; font-size:14px; border:none; border-radius:8px; cursor:pointer; margin-top:16px; text-align:center; letter-spacing:0.5px;"
                     x-text="'Importar ' + archivos.length + (archivos.length === 1 ? ' resumen' : ' resúmenes')"
                 ></button>
@@ -108,6 +109,7 @@
                 <button
                     type="submit"
                     x-show="cargando"
+                    x-cloak
                     disabled
                     style="display:block; width:100%; padding:12px 24px; background:#27272a; color:#52525b; font-size:14px; border:none; border-radius:8px; cursor:not-allowed; margin-top:16px; text-align:center;"
                 >Procesando...</button>

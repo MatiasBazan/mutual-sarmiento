@@ -48,7 +48,7 @@ class ResumenController extends Controller
             ->with('cliente')
             ->orderBy('estado')
             ->orderBy('id')
-            ->paginate(30)
+            ->paginate(10)
             ->withQueryString();
 
         // Stats reflejan los filtros activos.

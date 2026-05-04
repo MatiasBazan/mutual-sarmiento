@@ -53,6 +53,7 @@
 
     <!-- Tabla -->
     <div style="background:#18181b; border:1px solid #27272a; border-radius:12px; overflow:hidden;">
+    <div style="overflow-x:auto; -webkit-overflow-scrolling:touch;">
         <table style="width:100%; border-collapse:collapse;">
             <thead>
                 <tr style="background:#27272a;">
@@ -81,7 +82,8 @@
                                          background:rgba(245,158,11,0.1); color:#f59e0b;
                                          border:1px solid rgba(245,158,11,0.2);
                                          padding:2px 8px; border-radius:4px; font-size:11px;">
-                                ⚠ Sin celular
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                Sin celular
                             </span>
                         @endif
                     </td>
@@ -90,12 +92,9 @@
                         <div style="display:flex; align-items:center; gap:4px;">
 
                             <!-- Editar -->
-                            <button type="button" title="Editar"
+                            <button type="button" title="Editar" aria-label="Editar cliente"
                                     @click="abrirEditar({{ $c->id }}, {{ Js::from($c->nombre_completo) }}, {{ Js::from($c->nro_socio ?? '') }}, {{ Js::from($c->celular ?? '') }}, {{ Js::from($c->direccion ?? '') }})"
-                                    style="background:transparent; border:none; cursor:pointer; color:#71717a;
-                                           padding:6px; border-radius:6px; transition:color 0.15s; display:flex;"
-                                    onmouseover="this.style.color='#fafafa'"
-                                    onmouseout="this.style.color='#71717a'">
+                                    class="btn-icon">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -103,12 +102,9 @@
                             </button>
 
                             <!-- Eliminar -->
-                            <button type="button" title="Eliminar"
+                            <button type="button" title="Eliminar" aria-label="Eliminar cliente"
                                     @click="confirmarEliminar('{{ route('clientes.destroy', $c) }}', {{ Js::from($c->apellido) }})"
-                                    style="background:transparent; border:none; cursor:pointer; color:#71717a;
-                                           padding:6px; border-radius:6px; transition:color 0.15s; display:flex;"
-                                    onmouseover="this.style.color='#ef4444'"
-                                    onmouseout="this.style.color='#71717a'">
+                                    class="btn-icon btn-icon--danger">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                                     <polyline points="3 6 5 6 21 6"/>
                                     <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
@@ -129,6 +125,7 @@
                 @endforelse
             </tbody>
         </table>
+    </div>
         <div style="padding:12px 20px; border-top:1px solid #27272a;">
             {{ $clientes->links() }}
         </div>
